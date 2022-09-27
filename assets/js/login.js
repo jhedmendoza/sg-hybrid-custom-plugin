@@ -2,14 +2,17 @@
 
   function init() {
 
-
-    $('.user-login-register a').on('click', function(e) {
+    $('.user-login a').on('click', function(e) {
       e.preventDefault();
 
       Swal.fire({
         title: 'Login',
-        html: `<input type="text" id="username" class="swal2-input" placeholder="Username">
-        <input type="password" id="user-password" class="swal2-input" placeholder="Password">`,
+        html: 
+        `
+        <input type="text" id="username" class="swal2-input" placeholder="Username">
+        <input type="password" id="user-password" class="swal2-input" placeholder="Password">
+        <a style="float:left" href="#">Register</a>
+        `,
         confirmButtonText: 'Sign in',
         focusConfirm: false,
         preConfirm: () => {
@@ -44,6 +47,11 @@
       $('.swal2-input').on('keyup',function () {
         $('.swal2-confirm').removeAttr('disabled');
       });
+
+    });
+
+    $('.user-registration a').on('click', function(e) {
+      e.preventDefault();
 
     });
     
