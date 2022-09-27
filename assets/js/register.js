@@ -2,11 +2,12 @@
 
   function init() {
 
-    $('.user-registration a').on('click', function(e) {
+    $('body').on('click', '.user-registration', function(e) {
       e.preventDefault();
+      registerUser();
     });
 
-    $('.bid-btn').on('click', function(e) {
+    $('body').on('click', '.bid-btn', function(e) {
       e.preventDefault();
       var productID = $(this).attr('data-product-id');
       registerUser();
@@ -18,17 +19,18 @@
         title: 'Registration',
         html: 
         `
-        <input type="text" id="create-email" class="swal2-input" placeholder="Email">
+        <input type="text" id="create-email" class="swal2-input" placeholder="Email" required>
         <input type="text" id="create-username" class="swal2-input" placeholder="Username">
         <input type="password" id="create-password" class="swal2-input" placeholder="Password">
-        <a style="float:left" href="#">Register</a>
+        <input type="password" id="repeat-password" class="swal2-input" placeholder="Repeat Password">
         `,
         confirmButtonText: 'Register',
         focusConfirm: false,
         preConfirm: () => {
           const email = Swal.getPopup().querySelector('#create-email').value
-          const userame = Swal.getPopup().querySelector('#create-username').value
+          const username = Swal.getPopup().querySelector('#create-username').value
           const password = Swal.getPopup().querySelector('#create-password').value
+          const repeatPassword = Swal.getPopup().querySelector('#repeat-password').value
 
           return new Promise(function (resolve) {
             $.ajax({
@@ -37,22 +39,25 @@
                 data: {
                   'action'  : 'user_registration',
                   'email'   : email,
-                  'username': userame,
-                  'password': password
+                  'username': username,
+                  'password': password,
+                  'repeat_password': repeatPassword
                 }, 
                 beforeSend: function () {},
                 success: function (response) {
                   var resp = JSON.parse(response);
                   if (resp.status) {
-                    location.reload();
+                    window.location.replace(siteurl+'/my-account/payment-methods');
                   }
                   else {
-                    Swal.showValidationMessage(resp.error);
+                    Swal.showValidationMessage(resp.msg);
                     return false;
                   }
                 }
             });
           })
+
+
         },
       })
 

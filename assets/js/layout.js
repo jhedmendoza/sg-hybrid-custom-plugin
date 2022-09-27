@@ -6,7 +6,7 @@
       })
 
     function init() {
-      $('.bid-btn ').remove().clone().insertAfter('form .single_add_to_cart_button');
+      $('.bid-btn').remove().clone().insertAfter('form .single_add_to_cart_button');
 
       $('.wc-tabs-wrapper').addClass('row');
       $('#tab-description').addClass('col-6 pr-5');

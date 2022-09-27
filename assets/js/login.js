@@ -11,7 +11,7 @@
         `
         <input type="text" id="username" class="swal2-input" placeholder="Username">
         <input type="password" id="user-password" class="swal2-input" placeholder="Password">
-        <a style="float:left" href="#">Register</a>
+        <a class="user-registration" style="float:left" href="#">Register</a>
         `,
         confirmButtonText: 'Sign in',
         focusConfirm: false,
