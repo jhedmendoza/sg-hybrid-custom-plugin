@@ -10,14 +10,69 @@
     $('body').on('click', '.bid-btn', function(e) {
       e.preventDefault();
       var productID = $(this).attr('data-product-id');
-      registerUser();
 
+      if (isUserLogin == 1) 
+        bidOnProduct(productID);
+      
+      else 
+        registerUser();
+      
     });
+
+    function bidOnProduct(productID) {
+
+      Swal.fire({
+        title: 'Bid on this product',
+        html:
+        `
+        <label for="bid_amount" style="margin-top: 40px;padding-right:15px;font-size:25px">£</label>
+        <input type="number" id="bid-amount" class="swal2-input" min="0" placeholder="Amount" name="bid_amount">
+        `,
+        confirmButtonText: 'Submit',
+        focusConfirm: false,
+        preConfirm: () => {
+          const amount = Swal.getPopup().querySelector('#bid-amount').value
+
+          if (amount == '' || amount == 0) {
+            Swal.showValidationMessage('Please add an amount');
+          }
+
+          return new Promise(function (resolve) {
+            $.ajax({
+                url : sg_ajax_url,
+                type: 'POST',
+                data: {
+                  'action'    : 'user_bid',
+                  'amount'    : amount,
+                  'product_id': productID
+                },
+                beforeSend: function () {},
+                success: function (response) {
+                  var resp = JSON.parse(response);
+                  if (resp.status) {
+                    window.location.replace(siteurl+'/my-account/payment-methods');
+                  }
+                  else {
+                    Swal.showValidationMessage(resp.msg);
+                    return false;
+                  }
+                }
+            });
+          })
+
+
+        },
+      })
+
+      $('.swal2-input').on('keyup mouseup',function () {
+        $('.swal2-confirm').removeAttr('disabled');
+      });
+    }
 
     function registerUser() {
       Swal.fire({
         title: 'Registration',
-        html: 
+        html:
         `
         <input type="text" id="create-email" class="swal2-input" placeholder="Email" required>
         <input type="text" id="create-username" class="swal2-input" placeholder="Username">
@@ -42,7 +97,7 @@
                   'username': username,
                   'password': password,
                   'repeat_password': repeatPassword
-                }, 
+                },
                 beforeSend: function () {},
                 success: function (response) {
                   var resp = JSON.parse(response);

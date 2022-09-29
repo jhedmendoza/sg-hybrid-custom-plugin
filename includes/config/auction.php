@@ -1,0 +1,32 @@
+<?php
+return [
+    '_yith_auction_bid_increment'                        => '',
+    '_yith_wcact_automatic_reschedule_auction_unit'      => 'days',
+    '_yith_wcact_show_upbid'                             => 'no',
+    '_yith_wcact_show_overtime'                          => 'no',
+    '_yith_is_in_overtime'                               => 'no',
+    '_yith_auction_closed_buy_now'                       => 'no',
+    '_yith_auction_paid_order'                           => 'no',
+    '_yith_wcact_order_id'                               => '0',
+    '_yith_wcact_auction_type'                           => 'normal',
+    '_yith_wcact_auction_sealed'                         => 'no',
+    '_yith_auction_buy_now_onoff'                        => 'no',
+    '_yith_auction_bid_type_onoff'                       => 'no',
+    '_yith_wcact_bid_type_set_radio'                     => 'manual',
+    '_yith_wcact_bid_type_radio'                         => 'simple',
+    '_yith_auction_fee_onoff'                            => 'no',
+    '_yith_auction_fee_ask_onoff'                        => 'no',
+    '_yith_auction_reschedule_onoff'                     => 'no',
+    '_yith_auction_reschedule_closed_without_bids_onoff' => 'no',
+    '_yith_auction_reschedule_reserve_no_reached_onoff'  => 'no',
+    '_yith_auction_overtime_onoff'                       => 'no',
+    '_yith_auction_overtime_set_onoff'                   => 'no',
+    '_yith_auction_commission_fee_onoff'                 => 'no',
+    '_yith_auction_commission_fee'                       => 'a:2:{s:5:"value";s:0:"";s:4:"unit";s:5:"fixed";}',
+    '_yith_auction_bid_increment_advanced'               => 'a:2:{i:0;a:2:{s:3:"end";s:0:"";s:5:"value";s:0:"";}i:1;a:2:{s:5:"start";s:0:"";s:5:"value";s:0:"";}}',
+    '_yith_wcact_send_winner_email'                      => 'yes',
+    '_yith_wcact_send_admin_winner_email'                => 'yes',
+    '_yith_wcact_payment_gateway'                        => 'none',
+    '_yith_is_an_auction_product'                        => '1'
+];
+?>
