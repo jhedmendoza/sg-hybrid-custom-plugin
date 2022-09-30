@@ -4,13 +4,13 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class User {
 
     public function __construct() {
-      add_action('wp_ajax_create_user_login', [$this, 'user_login']);
-      add_action('wp_ajax_nopriv_user_login', [$this, 'user_login']);
-      add_action('wp_ajax_create_user_registration', [$this, 'user_registration']);
-      add_action('wp_ajax_nopriv_user_registration', [$this, 'user_registration']);
+      add_action('wp_ajax_create_sg_user_login', [$this, 'sg_user_login']);
+      add_action('wp_ajax_nopriv_sg_user_login', [$this, 'sg_user_login']);
+      add_action('wp_ajax_create_sg_user_registration', [$this, 'sg_user_registration']);
+      add_action('wp_ajax_nopriv_sg_user_registration', [$this, 'sg_user_registration']);
     }
 
-    public function user_login() {
+    public function sg_user_login() {
 
       $username = sanitize_text_field($_POST['username']);
       $password = sanitize_text_field($_POST['password']);
@@ -47,7 +47,7 @@ class User {
       exit;
     }
 
-    public function user_registration() {
+    public function sg_user_registration() {
       $email    = sanitize_text_field($_POST['email']);
       $username = sanitize_text_field($_POST['username']);
       $password = sanitize_text_field($_POST['password']);

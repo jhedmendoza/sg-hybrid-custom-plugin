@@ -4,12 +4,13 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Auction {
 
     public function __construct() {
-        add_action( 'woocommerce_single_product_summary',[$this,  'bid_button_on_product_page'], 32 );
 
-        add_action('wp_ajax_create_user_bid', [$this, 'user_bid']);
-        add_action('wp_ajax_nopriv_user_bid', [$this, 'user_bid']);
+      add_action( 'woocommerce_single_product_summary',[$this, 'bid_button_on_product_page'], 32 );
 
-        add_action('init', [$this,  'set_auction']);
+      add_action('wp_ajax_sg_user_bid', [$this, 'sg_user_bid']);
+      add_action('wp_ajax_nopriv_sg_user_bid', [$this, 'sg_user_bid']);
+
+      add_action('init', [$this,  'set_auction']);
     }
 
     public function set_auction() {
@@ -21,16 +22,17 @@ class Auction {
         }
     }
 
-    public function user_bid() {
+    public function sg_user_bid() {
 
       $amount     = sanitize_text_field($_POST['amount']);
       $product_id = sanitize_text_field($_POST['product_id']);
 
-      echo $amount; exit;
+      $product = wc_get_product($product_id);
+      $product_name = html_entity_decode('<b>'.$product->get_title().'</b>',ENT_COMPAT, 'UTF-8');
 
       echo wp_json_encode([
         'status' => true,
-        'msg'    => 'You successfuly bid to this product. Please wait for the administrator to approve your bid. Thank you.',
+        'msg'    => "You successfuly bid to {$product_name}. Please wait for the administrator to approve your bid. Thank you.",
       ]);
       exit;
     }

@@ -7,7 +7,7 @@
 
       Swal.fire({
         title: 'Login',
-        html: 
+        html:
         `
         <input type="text" id="username" class="swal2-input" placeholder="Username">
         <input type="password" id="user-password" class="swal2-input" placeholder="Password">
@@ -24,10 +24,10 @@
                 url : sg_ajax_url,
                 type: 'POST',
                 data: {
-                  'action'  : 'user_login',
+                  'action'  : 'sg_user_login',
                   'username': userame,
                   'password': password
-                }, 
+                },
                 beforeSend: function () {},
                 success: function (response) {
                   var resp = JSON.parse(response);
@@ -49,7 +49,7 @@
       });
 
     });
-    
+
   }
 
   $(document).ready(init);

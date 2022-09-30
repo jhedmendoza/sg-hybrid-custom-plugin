@@ -26,7 +26,7 @@
         html:
         `
         <label for="bid_amount" style="margin-top: 40px;padding-right:15px;font-size:25px">£</label>
-        <input type="number" id="bid-amount" class="swal2-input" min="0" placeholder="Amount" name="bid_amount">
+        <input type="number" id="bid-amount" class="swal2-input" min="1" placeholder="Amount" name="bid_amount">
         `,
         confirmButtonText: 'Submit',
         focusConfirm: false,
@@ -42,7 +42,7 @@
                 url : sg_ajax_url,
                 type: 'POST',
                 data: {
-                  'action'    : 'user_bid',
+                  'action'    : 'sg_user_bid',
                   'amount'    : amount,
                   'product_id': productID
                 },
@@ -52,8 +52,8 @@
                   if (resp.status) {
                     Swal.fire({
                       icon: 'success',
-                      title: resp.msg,
-                      showConfirmButton: false,
+                      text: resp.msg,
+                      showConfirmButton: true,
                     })
                     $('.bid-btn').attr('disabled');
                   }
@@ -97,7 +97,7 @@
                 url : sg_ajax_url,
                 type: 'POST',
                 data: {
-                  'action'  : 'user_registration',
+                  'action'  : 'sg_user_registration',
                   'email'   : email,
                   'username': username,
                   'password': password,
