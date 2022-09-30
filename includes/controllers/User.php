@@ -6,7 +6,6 @@ class User {
     public function __construct() {
       add_action('wp_ajax_create_user_login', [$this, 'user_login']);
       add_action('wp_ajax_nopriv_user_login', [$this, 'user_login']);
-
       add_action('wp_ajax_create_user_registration', [$this, 'user_registration']);
       add_action('wp_ajax_nopriv_user_registration', [$this, 'user_registration']);
     }

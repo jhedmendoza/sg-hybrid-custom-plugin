@@ -11,12 +11,12 @@
       e.preventDefault();
       var productID = $(this).attr('data-product-id');
 
-      if (isUserLogin == 1) 
+      if (isUserLogin == 1)
         bidOnProduct(productID);
-      
-      else 
+
+      else
         registerUser();
-      
+
     });
 
     function bidOnProduct(productID) {
@@ -50,7 +50,12 @@
                 success: function (response) {
                   var resp = JSON.parse(response);
                   if (resp.status) {
-                    window.location.replace(siteurl+'/my-account/payment-methods');
+                    Swal.fire({
+                      icon: 'success',
+                      title: resp.msg,
+                      showConfirmButton: false,
+                    })
+                    $('.bid-btn').attr('disabled');
                   }
                   else {
                     Swal.showValidationMessage(resp.msg);

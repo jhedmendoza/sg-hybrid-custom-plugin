@@ -23,7 +23,7 @@ class Hybrid {
 	}
 
 	function initialize() {
-		
+
 		switch ($_SERVER['SERVER_NAME']) {
 
 			case 'scotchgalore-careers.local':
@@ -53,13 +53,16 @@ class Hybrid {
 
 		//Include controllers.
 		require_once(HYBRID_PATH.'includes/controllers/User.php');
-    	require_once(HYBRID_PATH.'includes/controllers/Auction.php');
+    require_once(HYBRID_PATH.'includes/controllers/Auction.php');
+
+		//Admin controllers.
+		require_once(HYBRID_PATH.'includes/admin/controllers/AuctionRequests.php');
 
 		//Include core.
 		hybrid_include('includes/hybrid-assets.php');
 
 		hybrid_include('includes/admin/initialize-admin.php');
-		
+
 
  	}
 
@@ -70,7 +73,7 @@ class Hybrid {
 			define( $name, $value );
 		}
 	}
-	
+
 
 	function hybrid_install() {
 
@@ -80,7 +83,7 @@ class Hybrid {
 
 
 		// $charset_collate = $wpdb->get_charset_collate();
-	
+
 		// $sql[] = "CREATE TABLE $table_membership_level (
 		// 	id INT (11) AUTO_INCREMENT,
 		// 	membership_name VARCHAR(100),
@@ -90,7 +93,7 @@ class Hybrid {
 
 		// require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		// dbDelta($sql) ;
-	
+
 		// add_option('hybrid_db_version', HYBRID_VERSION);
 	}
 
