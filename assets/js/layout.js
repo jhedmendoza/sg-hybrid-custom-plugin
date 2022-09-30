@@ -1,7 +1,12 @@
 (function ($) {
 
     $(window).on('load', function () {
-        $('.summary p.stock, .summary p.price, .single_add_to_cart_button, .bid-btn').show();
+        $('.summary p.stock, .summary p.price, .single_add_to_cart_button').show();
+
+        setTimeout(function() { 
+          $('.bid-btn').show();
+        }, 500);
+
         $('.preloader').hide();
       })
 
