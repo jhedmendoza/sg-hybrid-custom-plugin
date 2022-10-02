@@ -39,7 +39,7 @@ class Auction {
 
     public function enable_auction_to_product($product_id, $start_price) {
 
-        //TODO: Update bid time to every 15 mins when there is succeeding bid
+        //TODO: Update bid time to every 15 mins when there is succeeding bid.
 
         $auction_config = include hybrid_get_path('includes/config/auction.php');
         $current_date = date('Y-m-d H:i:s');
