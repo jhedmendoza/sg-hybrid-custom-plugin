@@ -60,7 +60,7 @@
                       text: resp.msg,
                       showConfirmButton: true,
                     })
-                    $('.bid-btn').attr('disabled');
+                    $('.bid-btn').attr('disabled', true);
                   }
                   else {
                     Swal.showValidationMessage(resp.msg);

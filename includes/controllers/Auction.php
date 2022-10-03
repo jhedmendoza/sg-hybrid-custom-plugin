@@ -32,7 +32,7 @@ class Auction {
       if ( !empty($check_user_bid) ) {
         echo wp_json_encode([
           'status' => true,
-          'msg'    => "User already pre-bid on this product",
+          'msg'    => 'User has already a bid on this product',
         ]);
       }
       exit;
@@ -47,7 +47,6 @@ class Auction {
       $user_id    = get_current_user_id();
       $status     = 0;
 
-      //save bidder's product
       $save = insert_data('sg_hybrid_user_bid', [
         'product_id' => $product_id,
         'user_id'    => $user_id,
@@ -57,7 +56,7 @@ class Auction {
 
       if ($save) {
         $product = wc_get_product($product_id);
-        $product_name = html_entity_decode($product->get_title(),ENT_COMPAT, 'UTF-8');
+        $product_name = html_entity_decode($product->get_title(), ENT_COMPAT, 'UTF-8');
 
         echo wp_json_encode([
           'status' => true,
@@ -67,7 +66,7 @@ class Auction {
       else {
         echo wp_json_encode([
           'status' => false,
-          'msg'    => "Something went wrong. Please try again later.",
+          'msg'    => 'Something went wrong. Please try again later.',
         ]);
       }
       exit;

@@ -49,17 +49,31 @@ function enqueue_admin_css_js() {
 
 function sg_auction_request_list() {
 
-  // $logoManager = new LogoManager();
-  // $logos = $logoManager->get_all_logo();
+  $requests = new AuctionRequests();
+  $data = $requests->get_all_user_auction_requests();
 
-  // $pagination = render_pagination($logos);
+  foreach($data['data'] as $value) {
+
+    $product = wc_get_product($value->product_id);
+    $user = get_user_by('id', $value->user_id);
+
+    $user_info[] = array(
+      'product_id'  => $value->product_id,
+      'product_name'=> $product->get_title(),
+      'user_id'     => $value->id,
+      'user_name'   => $user->data->display_name,
+      'amount'      => number_format((float)$value->bid, 2, '.', ''),
+      'status'      => $value->status,
+      'date'        => $value->date,
+    );
+  }
+
+  $pagination = render_pagination($data);
 
   $result = [
-    // 'bidders'     => $bidders,
-    // 'pagination'=> $pagination
+    'users' => $user_info,
+    'pagination'=> $pagination
   ];
-
-  // unset($result['logos']['pagination']);
 
   hybrid_include('includes/admin/template/auction_request/list.php', $result);
 }
