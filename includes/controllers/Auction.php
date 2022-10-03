@@ -4,14 +4,16 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Auction {
 
     public function __construct() {
-      add_action( 'woocommerce_single_product_summary',[$this, 'bid_button_on_product_page'], 32 );
-
       add_action('wp_ajax_sg_user_bid', [$this, 'sg_user_bid']);
       add_action('wp_ajax_nopriv_sg_user_bid', [$this, 'sg_user_bid']);
-
-      add_action('init', [$this,  'set_auction']);
       add_action('wp_ajax_check_user_first_bid_attempt_status', [$this, 'check_user_first_bid_attempt_status']);
       add_action('wp_ajax_nopriv_check_user_first_bid_attempt_status', [$this, 'check_user_first_bid_attempt_status']);
+      add_action('wp_ajax_approve_reject_user_auction', [$this, 'approve_reject_user_auction']);
+      add_action('wp_ajax_nopriv_approve_reject_user_auction', [$this, 'approve_reject_user_auction']);
+
+      add_action( 'woocommerce_single_product_summary',[$this, 'bid_button_on_product_page'], 32 );
+
+      add_action('init', [$this,  'set_auction']);
     }
 
     public function set_auction() {
@@ -21,6 +23,10 @@ class Auction {
             update_post_meta($product_id, '_yith_auction_for', strtotime($current_date) );
             update_post_meta($product_id, '_yith_auction_to', strtotime('+15 minutes', strtotime($current_date)));
         }
+    }
+
+    public function approve_reject_user_auction() {
+
     }
 
     public function check_user_first_bid_attempt_status() {
