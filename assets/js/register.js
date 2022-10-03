@@ -2,6 +2,9 @@
 
   function init() {
 
+    if (isUserLogin && isProductPage)
+      checkUserBid();
+
     $('body').on('click', '.user-registration', function(e) {
       e.preventDefault();
       registerUser();
@@ -35,6 +38,8 @@
 
           if (amount == '' || amount == 0) {
             Swal.showValidationMessage('Please add an amount');
+          } else if (!isNumeric(amount)) {
+            Swal.showValidationMessage('Please add a valid amount');
           }
 
           return new Promise(function (resolve) {
@@ -116,14 +121,38 @@
                 }
             });
           })
-
-
         },
       })
 
       $('.swal2-input').on('keyup',function () {
         $('.swal2-confirm').removeAttr('disabled');
       });
+    }
+
+    function checkUserBid() {
+      var productID = $('button[name="add-to-cart"]').attr('value');
+      $.ajax({
+          url : sg_ajax_url,
+          type: 'POST',
+          data: {
+            'action':'check_user_first_bid_attempt_status',
+            'product_id': productID
+          },
+          beforeSend: function () {},
+          success: function (response) {
+            var resp = JSON.parse(response);
+            if (resp.status) {
+              $('.bid-btn').attr({
+                  'disabled' : true,
+                  'title':'You already bid for this product. Wait for the admin to approve your bid.',
+              });
+            }
+          }
+      });
+    }
+
+    function isNumeric(n) {
+      return !isNaN(parseFloat(n)) && isFinite(n);
     }
 
   }

@@ -51,6 +51,8 @@ class Hybrid {
 		// Include utility functions.
 		require_once(HYBRID_PATH.'includes/utility-function.php');
 
+		require_once(HYBRID_PATH.'includes/db-functions.php');
+
 		//Include controllers.
 		require_once(HYBRID_PATH.'includes/controllers/User.php');
     require_once(HYBRID_PATH.'includes/controllers/Auction.php');

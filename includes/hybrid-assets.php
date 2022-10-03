@@ -22,9 +22,10 @@ function hybrid_enqueue_script() {
 function js_inline_script() {
 ?>
 <script type="text/javascript">
-   		var sg_ajax_url = "<?php echo admin_url('admin-ajax.php'); ?>";
+   	var sg_ajax_url = "<?php echo admin_url('admin-ajax.php'); ?>";
 		var siteurl = "<?php echo site_url(); ?>";
 		var isUserLogin = "<?php echo is_user_logged_in() ? 1: 0 ?>";
+		var isProductPage = "<?php echo is_product() ? 1 : 0 ?>";
 </script>
 <?php
 }

@@ -4,13 +4,14 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Auction {
 
     public function __construct() {
-
       add_action( 'woocommerce_single_product_summary',[$this, 'bid_button_on_product_page'], 32 );
 
       add_action('wp_ajax_sg_user_bid', [$this, 'sg_user_bid']);
       add_action('wp_ajax_nopriv_sg_user_bid', [$this, 'sg_user_bid']);
 
       add_action('init', [$this,  'set_auction']);
+      add_action('wp_ajax_check_user_first_bid_attempt_status', [$this, 'check_user_first_bid_attempt_status']);
+      add_action('wp_ajax_nopriv_check_user_first_bid_attempt_status', [$this, 'check_user_first_bid_attempt_status']);
     }
 
     public function set_auction() {
@@ -22,18 +23,53 @@ class Auction {
         }
     }
 
+    public function check_user_first_bid_attempt_status() {
+
+      $product_id = sanitize_text_field($_POST['product_id']);
+      $user_id    = get_current_user_id();
+      $check_user_bid = get_user_auction('sg_hybrid_user_bid', $user_id, $product_id);
+
+      if ( !empty($check_user_bid) ) {
+        echo wp_json_encode([
+          'status' => true,
+          'msg'    => "User already pre-bid on this product",
+        ]);
+      }
+      exit;
+
+
+    }
+
     public function sg_user_bid() {
 
       $amount     = sanitize_text_field($_POST['amount']);
       $product_id = sanitize_text_field($_POST['product_id']);
+      $user_id    = get_current_user_id();
+      $status     = 0;
 
-      $product = wc_get_product($product_id);
-      $product_name = html_entity_decode('<b>'.$product->get_title().'</b>',ENT_COMPAT, 'UTF-8');
-
-      echo wp_json_encode([
-        'status' => true,
-        'msg'    => "You successfuly bid to {$product_name}. Please wait for the administrator to approve your bid. Thank you.",
+      //save bidder's product
+      $save = insert_data('sg_hybrid_user_bid', [
+        'product_id' => $product_id,
+        'user_id'    => $user_id,
+        'bid'        => $amount,
+        'status'     => $status
       ]);
+
+      if ($save) {
+        $product = wc_get_product($product_id);
+        $product_name = html_entity_decode($product->get_title(),ENT_COMPAT, 'UTF-8');
+
+        echo wp_json_encode([
+          'status' => true,
+          'msg'    => "You successfuly bid to {$product_name}. Please wait for the administrator to approve your bid. Thank you.",
+        ]);
+      }
+      else {
+        echo wp_json_encode([
+          'status' => false,
+          'msg'    => "Something went wrong. Please try again later.",
+        ]);
+      }
       exit;
     }
 
@@ -71,6 +107,7 @@ class Auction {
         if ($product->get_type() != 'auction')
             echo '<button type="button" data-product-id="'.$product->get_id().'" style="display:none" class="bid-btn single_add_to_cart_button button alt">Bid</button>';
     }
+
 }
 
 $auction = new Auction();

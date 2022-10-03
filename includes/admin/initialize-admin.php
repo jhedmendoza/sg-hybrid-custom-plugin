@@ -12,7 +12,7 @@ function initialize_sg_auction_requests_menu() {
 
   add_menu_page( $title, $title, 'manage_options', $slug, '', $icon, $position );
 
-  $auction_request_menu  = add_submenu_page( $slug, 'Auction Requests', 'Auction Requests', 'manage_options', 'sg-auction-requests', 'sg_auction_request_list');
+  $auction_request_menu  = add_submenu_page( $slug, 'Auction Manager', 'Auction Manager', 'manage_options', 'sg-auction-requests', 'sg_auction_request_list');
 
   remove_submenu_page($slug, $slug);
 
