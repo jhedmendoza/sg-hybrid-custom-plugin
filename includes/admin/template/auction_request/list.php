@@ -4,7 +4,7 @@
     <div class="row">
 
      <div class="col">
-      <h2>Auction Requests</h2>
+      <h4 class="mb-4">Auction Requests</h4>
     </div>
 
     </div>
