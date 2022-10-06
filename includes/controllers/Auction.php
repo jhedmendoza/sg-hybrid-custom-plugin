@@ -18,10 +18,10 @@ class Auction {
 
     public function set_auction() {
         if (isset($_GET['dev'])) {
-            $current_date = date('Y-m-d H:i:s');
-            $product_id = 17930;
-            update_post_meta($product_id, '_yith_auction_for', strtotime($current_date) );
-            update_post_meta($product_id, '_yith_auction_to', strtotime('+15 minutes', strtotime($current_date)));
+            // $current_date = date('Y-m-d H:i:s');
+            // $product_id = 17930;
+            // update_post_meta($product_id, '_yith_auction_for', strtotime($current_date) );
+            // update_post_meta($product_id, '_yith_auction_to', strtotime('+15 minutes', strtotime($current_date)));
         }
     }
 
@@ -34,11 +34,10 @@ class Auction {
       //enable bid to product and user
       if ($status) {
         $this->enable_auction_to_product($product_id, $bid_price);
-        $user = $this->enable_auction_to_user($user_id, $product_id, $bid_price);
+        $auctionEnabledToUser = $this->enable_auction_to_user($user_id, $product_id, $bid_price);
+        $userStatus = $this->update_user_status($user_id, $status);
 
-        //TODO: create function to update status to 1
-
-        if ($user) {
+        if ($auctionEnabledToUser && $userStatus) {
           echo wp_json_encode([
             'status' => true,
             'msg'    => 'User successfully bid to this product',
@@ -54,6 +53,7 @@ class Auction {
       else {
         //disable bid to product and user
         //set again product type from `auction` to `simple`
+        //set _price to _regular_price
       }
       exit;
     }
@@ -137,6 +137,12 @@ class Auction {
           'bid'        => $bid_price
         ]);
         return $insert;
+    }
+
+    public function update_user_status($user_id, $status) {
+      $data = ['status' => $status];
+      $update = update_data('sg_hybrid_user_bid', $data, ['used_id' => $user_id]);
+      return $update;
     }
 
     function bid_button_on_product_page() {

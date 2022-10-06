@@ -12,6 +12,17 @@ function insert_data($table_name, $data) {
 			return 0;
 }
 
+ function update_data($table_name, $data, $where) {
+		global $wpdb;
+
+		$update = $wpdb->update($wpdb->prefix.$table_name, $data, $where);
+
+		if ($update > 0)
+				return true;
+		else
+			return false;
+}
+
 function get_all_data($table_name) {
 
 	global $wpdb;
