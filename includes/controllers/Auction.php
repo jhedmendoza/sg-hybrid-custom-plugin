@@ -26,7 +26,36 @@ class Auction {
     }
 
     public function approve_reject_user_auction() {
+      $product_id = sanitize_text_field($_POST['product_id']);
+      $user_id    = sanitize_text_field($_POST['user_id']);
+      $bid_price  = sanitize_text_field($_POST['bid_price']);
+      $status     = sanitize_text_field($_POST['status']);
 
+      //enable bid to product and user
+      if ($status) {
+        $this->enable_auction_to_product($product_id, $bid_price);
+        $user = $this->enable_auction_to_user($user_id, $product_id, $bid_price);
+
+        //TODO: create function to update status to 1
+
+        if ($user) {
+          echo wp_json_encode([
+            'status' => true,
+            'msg'    => 'User successfully bid to this product',
+          ]);
+        }
+        else {
+          echo wp_json_encode([
+            'status' => false,
+            'msg'    => 'Something went wrong. Please try again later.',
+          ]);
+        }
+      }
+      else {
+        //disable bid to product and user
+        //set again product type from `auction` to `simple`
+      }
+      exit;
     }
 
     public function check_user_first_bid_attempt_status() {
@@ -42,8 +71,6 @@ class Auction {
         ]);
       }
       exit;
-
-
     }
 
     public function sg_user_bid() {
@@ -90,20 +117,26 @@ class Auction {
         }
 
         add_post_meta($product_id, '_yith_auction_start_price', $start_price);
-        add_post_meta($product_id, '_price', $start_price);
-        add_post_meta($product_id, 'current_bid', $start_price);
-
         add_post_meta($product_id, '_yith_auction_for', strtotime($current_date) );
         add_post_meta($product_id, '_yith_auction_to', strtotime('+15 minutes', strtotime($current_date)));
 
+        add_post_meta($product_id, 'current_bid', $start_price);
+
+        update_post_meta($product_id, '_price', $start_price); //we should update the base price of product to user's bid
+
         //we need to remove first the default product type and set it to `auction`
-        wp_remove_object_terms( $product_id, 'simple', 'product_type' );
-        wp_set_object_terms( $product_id, 'auction', 'product_type', true );
+        // wp_remove_object_terms( $product_id, 'simple', 'product_type' );
+        wp_set_object_terms( $product_id, 'auction', 'product_type', false );
 
     }
 
-    public function enable_auction_to_user() {
-        //wp_yith_wcact_auction table
+    public function enable_auction_to_user($user_id, $auction_id, $bid_price) {
+        $insert = insert_data('yith_wcact_auction', [
+          'user_id'    => $user_id,
+          'auction_id' => $auction_id,
+          'bid'        => $bid_price
+        ]);
+        return $insert;
     }
 
     function bid_button_on_product_page() {

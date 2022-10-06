@@ -54,13 +54,16 @@ function sg_auction_request_list() {
 
   foreach($data['data'] as $value) {
 
-    $product = wc_get_product($value->product_id);
-    $user = get_user_by('id', $value->user_id);
+    $product_id = $value->product_id;
+    $user_id    = $value->user_id;
+
+    $product = wc_get_product($product_id);
+    $user = get_user_by('id', $user_id);
 
     $user_info[] = array(
-      'product_id'  => $value->product_id,
+      'product_id'  => $product_id,
       'product_name'=> $product->get_title(),
-      'user_id'     => $value->id,
+      'user_id'     => $user_id,
       'user_name'   => $user->data->display_name,
       'amount'      => number_format((float)$value->bid, 2, '.', ''),
       'status'      => $value->status,

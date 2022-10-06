@@ -30,7 +30,7 @@
               <td>£<?php echo $value['amount'] ?></td>
               <td><?php echo $value['date']; ?></td>
               <td>
-                <input type="checkbox" data-user-id="" id="chk-status" data-toggle="toggle" data-size="sm" data-on="Approved" data-off="Rejected" />
+                <input <?php echo $value['status'] ? 'checked' : '' ?> type="checkbox" data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" id="chk-status" data-toggle="toggle" data-size="sm" data-on="Approved" data-off="Rejected" />
               </td>
             </tr>
             <?php endforeach; ?>
