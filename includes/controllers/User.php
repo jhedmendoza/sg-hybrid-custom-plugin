@@ -69,6 +69,12 @@ class User {
           $user = get_user_by( 'id', $user_id );
           $user->set_role( 'subscriber' );
 
+          //user auto login
+           wp_signon([
+            'user_login'    => $username,
+            'user_password' => $password,
+          ]);
+
           echo wp_json_encode([
             'status' => true,
             'msg'    => 'User successfuly created',
