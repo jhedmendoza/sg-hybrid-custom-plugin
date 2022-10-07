@@ -21,6 +21,9 @@ class Auction {
 
     public function set_auction() {
         if (isset($_GET['dev'])) {
+          $saved_methods = wc_get_customer_saved_methods_list( get_current_user_id() );
+          $has_methods   = (bool) $saved_methods;
+          printr($saved_methods);
             // $current_date = date('Y-m-d H:i:s');
             // $product_id = 17930;
             // update_post_meta($product_id, '_yith_auction_for', strtotime($current_date) );
