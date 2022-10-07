@@ -2,9 +2,10 @@
 
   function init() {
 
-    $('#chk-status').change(function() {
+    $('.chk-status').change(function() {
+
       var status = $(this).prop('checked');
-      if (status) {
+
         $.ajax({
             url : ajaxurl,
             type: 'POST',
@@ -13,7 +14,7 @@
               'user_id'   : $(this).attr('data-user-id'),
               'product_id': $(this).attr('data-product-id'),
               'bid_price' : $(this).attr('data-bid-price'),
-              'status'    : status
+              'status'    : (status) ? 1 : 0
             },
             beforeSend: function () {},
             success: function (response) {
@@ -24,7 +25,7 @@
               }
             }
         });
-      }
+
     })
 
   }

@@ -3,6 +3,9 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Auction {
 
+    //TODO: Update bid time to every 15 mins when there is succeeding bid.
+    //TODO: Disable bid when there is no payment option for user.
+
     public function __construct() {
       add_action('wp_ajax_sg_user_bid', [$this, 'sg_user_bid']);
       add_action('wp_ajax_nopriv_sg_user_bid', [$this, 'sg_user_bid']);
@@ -34,8 +37,9 @@ class Auction {
       //enable bid to product and user
       if ($status) {
         $this->enable_auction_to_product($product_id, $bid_price);
+        $userStatus = $this->update_user_status($product_id, $user_id, 1);
         $auctionEnabledToUser = $this->enable_auction_to_user($user_id, $product_id, $bid_price);
-        $userStatus = $this->update_user_status($user_id, $status);
+
 
         if ($auctionEnabledToUser && $userStatus) {
           echo wp_json_encode([
@@ -49,15 +53,27 @@ class Auction {
             'msg'    => 'Something went wrong. Please try again later.',
           ]);
         }
+        exit;
       }
       else {
-        //disable bid to product and user
-        //set again product type from `auction` to `simple`
-        //set _price to _regular_price
-      }
-      exit;
-    }
+          $userStatus = $this->update_user_status($product_id, $user_id, 0);
+          $delete = $this->delete_user_and_product_auction_data($product_id, $user_id);
 
+          if ($userStatus && $delete) {
+            echo wp_json_encode([
+              'status' => true,
+              'msg'    => 'User successfully rejected',
+            ]);
+          }
+          else {
+            echo wp_json_encode([
+              'status' => false,
+              'msg'    => 'Something went wrong. Please try again later.',
+            ]);
+          }
+          exit;
+        }
+      }
     public function check_user_first_bid_attempt_status() {
 
       $product_id = sanitize_text_field($_POST['product_id']);
@@ -107,8 +123,6 @@ class Auction {
 
     public function enable_auction_to_product($product_id, $start_price) {
 
-        //TODO: Update bid time to every 15 mins when there is succeeding bid.
-
         $auction_config = include hybrid_get_path('includes/config/auction.php');
         $current_date = date('Y-m-d H:i:s');
 
@@ -130,6 +144,24 @@ class Auction {
 
     }
 
+    public function remove_auction_to_product($product_id) {
+      $auction_config = include hybrid_get_path('includes/config/auction.php');
+
+      $regular_price = get_post_meta($product_id, '_regular_price');
+
+      foreach ($auction_config as $key => $value) {
+          delete_post_meta($product_id, $key);
+      }
+
+      delete_post_meta($product_id, '_yith_auction_start_price');
+      delete_post_meta($product_id, '_yith_auction_for' );
+      delete_post_meta($product_id, '_yith_auction_to');
+      delete_post_meta($product_id, 'current_bid');
+
+      update_post_meta($product_id, '_price', $regular_price[0]);
+      wp_set_object_terms( $product_id, 'simple', 'product_type', false );
+    }
+
     public function enable_auction_to_user($user_id, $auction_id, $bid_price) {
         $insert = insert_data('yith_wcact_auction', [
           'user_id'    => $user_id,
@@ -139,10 +171,25 @@ class Auction {
         return $insert;
     }
 
-    public function update_user_status($user_id, $status) {
-      $data = ['status' => $status];
-      $update = update_data('sg_hybrid_user_bid', $data, ['used_id' => $user_id]);
+    public function update_user_status($product_id, $user_id, $status) {
+
+      $update = update_data('sg_hybrid_user_bid', $status, $product_id, $user_id);
       return $update;
+    }
+
+    public function delete_user_and_product_auction_data($product_id, $user_id) {
+      $data = [
+        'auction_id' => $product_id,
+        'user_id'    => $user_id
+      ];
+      $format = ['%d', '%d'];
+
+      //delete the auction meta data for a product
+      $this->remove_auction_to_product($product_id);
+
+      //delete the user auction data
+      delete_data('yith_wcact_auction', $data, $format);
+      return true;
     }
 
     function bid_button_on_product_page() {

@@ -19,6 +19,7 @@
             <th scope="col">Bid Price</th>
             <th scope="col">Date Created</th>
             <th scope="col">Status</th>
+            <!-- <th scope="col">Action</th> -->
           </tr>
         </thead>
         <tbody>
@@ -30,8 +31,11 @@
               <td>£<?php echo $value['amount'] ?></td>
               <td><?php echo $value['date']; ?></td>
               <td>
-                <input <?php echo $value['status'] ? 'checked' : '' ?> type="checkbox" data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" id="chk-status" data-toggle="toggle" data-size="sm" data-on="Approved" data-off="Rejected" />
+                <input class="chk-status" <?php echo $value['status'] ? 'checked' : '' ?> type="checkbox" data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" data-toggle="toggle" data-size="sm" data-on="Approved" data-off="Rejected" />
               </td>
+              <!-- <td>
+                <button class="btn btn-danger btn-delete btn-sm">Delete</button>
+              </td> -->
             </tr>
             <?php endforeach; ?>
           <?php else: ?>

@@ -12,15 +12,25 @@ function insert_data($table_name, $data) {
 			return 0;
 }
 
- function update_data($table_name, $data, $where) {
+ function update_data($table_name, $status, $product_id, $user_id) {
 		global $wpdb;
+
+		$data = ['status' => $status];
+		$where = ['product_id' => $product_id, 'user_id' => $user_id];
 
 		$update = $wpdb->update($wpdb->prefix.$table_name, $data, $where);
 
-		if ($update > 0)
+		if ($update > 0) {
 				return true;
-		else
+		}
+		else if ($update === false) {
 			return false;
+		}
+}
+
+function delete_data($table_name, $where, $format) {
+	global $wpdb;
+  return $wpdb->delete($wpdb->prefix.$table_name, $where);
 }
 
 function get_all_data($table_name) {
