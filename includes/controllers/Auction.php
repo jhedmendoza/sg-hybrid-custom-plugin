@@ -4,8 +4,6 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Auction {
 
     //TODO: Update bid time to every 15 mins when there is succeeding bid.
-    //TODO: Disable bid when there is no payment option for user.
-
     public function __construct() {
       add_action('wp_ajax_sg_user_bid', [$this, 'sg_user_bid']);
       add_action('wp_ajax_nopriv_sg_user_bid', [$this, 'sg_user_bid']);
@@ -23,6 +21,7 @@ class Auction {
         if (isset($_GET['dev'])) {
           $saved_methods = wc_get_customer_saved_methods_list( get_current_user_id() );
           $has_methods   = (bool) $saved_methods;
+          echo $has_methods; exit;
           printr($saved_methods);
             // $current_date = date('Y-m-d H:i:s');
             // $product_id = 17930;
@@ -197,11 +196,29 @@ class Auction {
 
     function bid_button_on_product_page() {
         global $product;
+        $user_id    = get_current_user_id();
+        $product_id = $product->get_id();
 
-        if ($product->get_type() != 'auction')
-            echo '<button type="button" data-product-id="'.$product->get_id().'" style="display:none" class="bid-btn single_add_to_cart_button button alt">Bid</button>';
+        //check if user has payment method
+        $saved_methods = wc_get_customer_saved_methods_list($user_id);
+        $has_methods   = (bool) $saved_methods;
+
+        //check user if already bid on the product
+        $check_user_bid = get_user_auction('sg_hybrid_user_bid', $user_id, $product_id);
+
+        $disableBtn = ($has_methods && empty($check_user_bid) ) ? '' : 'disabled';
+
+        if (!$has_methods)
+          $BtnMessage = 'You need to add a valid credit card in order to bid. Please go to payment method in My Account';
+        else if (!empty($check_user_bid))
+          $BtnMessage = 'You already bid for this product. Wait for the admin to approve your bid.';
+
+        if ($product->get_type() != 'auction') {
+            echo '<span class="tool-tip" title="hello world">';
+            echo '<button title="" '.$disableBtn.' type="button" data-product-id="'.$product_id.'"  style="display:none" class="bid-btn single_add_to_cart_button button alt">Bid</button>';
+            echo '</span>';
+        }
     }
-
 }
 
 $auction = new Auction();

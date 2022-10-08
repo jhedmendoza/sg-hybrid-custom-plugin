@@ -15,6 +15,7 @@
         <thead>
           <tr>
             <th scope="col">Username</th>
+            <th scope="col">Product ID</th>
             <th scope="col">Product Name</th>
             <th scope="col">Bid Price</th>
             <th scope="col">Date Created</th>
@@ -27,15 +28,16 @@
             <?php foreach($attributes['users'] as $key => $value): ?>
             <tr>
               <td><?php echo $value['user_name']; ?></td>
-              <td><?php echo $value['product_name']; ?></td>
+              <td><?php echo $value['product_id'] ?></td>
+              <td><a class="product-name" target="_blank" href="<?php echo get_permalink($value['product_id']) ?>"><?php echo $value['product_name']; ?></a></td>
               <td>£<?php echo $value['amount'] ?></td>
               <td><?php echo $value['date']; ?></td>
               <td>
                 <input class="chk-status" <?php echo $value['status'] ? 'checked' : '' ?> type="checkbox" data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" data-toggle="toggle" data-size="sm" data-on="Approved" data-off="Rejected" />
               </td>
-              <!-- <td>
-                <button class="btn btn-danger btn-delete btn-sm">Delete</button>
-              </td> -->
+              <td>
+                <!-- <button class="btn btn-danger btn-delete btn-sm">Delete</button> -->
+              </td>
             </tr>
             <?php endforeach; ?>
           <?php else: ?>

@@ -2,8 +2,10 @@
 
   function init() {
 
-    if (isUserLogin && isProductPage)
-      checkUserBid();
+    $('.single_add_to_cart_button').tooltip();
+
+    // if (isUserLogin && isProductPage)
+    //   checkUserBid();
 
     $('body').on('click', '.user-registration', function(e) {
       e.preventDefault();
@@ -60,7 +62,12 @@
                       text: resp.msg,
                       showConfirmButton: true,
                     })
-                    $('.bid-btn').attr('disabled', true);
+                    $('.bid-btn')
+                    .attr({
+                        'disabled':true,
+                        'title':'You already bid for this product. Wait for the admin to approve your bid.',
+                    });
+                    .attr('disabled', true);
                   }
                   else {
                     Swal.showValidationMessage(resp.msg);
