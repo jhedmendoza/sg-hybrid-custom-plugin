@@ -41,7 +41,7 @@
             </tr>
             <?php endforeach; ?>
           <?php else: ?>
-            <tr><td colspan="5">No data available</td></tr>
+            <tr><td class="text-center" colspan="6">No data available</td></tr>
           <?php endif; ?>
         </tbody>
       </table>

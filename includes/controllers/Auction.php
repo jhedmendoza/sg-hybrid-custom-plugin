@@ -198,6 +198,7 @@ class Auction {
         global $product;
         $user_id    = get_current_user_id();
         $product_id = $product->get_id();
+        $btnMessage = '';
 
         //check if user has payment method
         $saved_methods = wc_get_customer_saved_methods_list($user_id);
@@ -205,16 +206,14 @@ class Auction {
 
         //check user if already bid on the product
         $check_user_bid = get_user_auction('sg_hybrid_user_bid', $user_id, $product_id);
-
         $disableBtn = ($has_methods && empty($check_user_bid) ) ? '' : 'disabled';
 
-        $btnMessage = '';
-
-        if (!$has_methods)
+        if (!$has_methods) {
           $btnMessage = 'You need to add a valid credit card in order to bid. Please go to payment method in My Account';
-        else if (!empty($check_user_bid))
+        }
+        else if ( !empty($check_user_bid) ) {
           $btnMessage = 'You already bid for this product. Wait for the admin to approve your bid.';
-
+        }
 
         if ($product->get_type() != 'auction') {
             echo '<span class="tool-tip" title="hello world">';

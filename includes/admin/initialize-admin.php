@@ -52,24 +52,30 @@ function sg_auction_request_list() {
   $requests = new AuctionRequests();
   $data = $requests->get_all_user_auction_requests();
 
-  foreach($data['data'] as $value) {
+  if ( isset($data['data']) && !empty($data['data']) ) {
 
-    $product_id = $value->product_id;
-    $user_id    = $value->user_id;
+    foreach($data['data'] as $value) {
 
-    $product = wc_get_product($product_id);
-    $user = get_user_by('id', $user_id);
+      $product_id = $value->product_id;
+      $user_id    = $value->user_id;
 
-    $user_info[] = array(
-      'product_id'  => $product_id,
-      'product_name'=> $product->get_title(),
-      'user_id'     => $user_id,
-      'user_name'   => $user->data->display_name,
-      'amount'      => number_format((float)$value->bid, 2, '.', ''),
-      'status'      => $value->status,
-      'date'        => $value->date,
-    );
+      $product = wc_get_product($product_id);
+      $user = get_user_by('id', $user_id);
+
+      $user_info[] = array(
+        'product_id'  => $product_id,
+        'product_name'=> $product->get_title(),
+        'user_id'     => $user_id,
+        'user_name'   => $user->data->display_name,
+        'amount'      => number_format((float)$value->bid, 2, '.', ''),
+        'status'      => $value->status,
+        'date'        => $value->date,
+      );
+    }
+
   }
+
+
 
   $pagination = render_pagination($data);
 
