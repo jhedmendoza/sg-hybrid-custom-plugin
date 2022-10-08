@@ -208,14 +208,17 @@ class Auction {
 
         $disableBtn = ($has_methods && empty($check_user_bid) ) ? '' : 'disabled';
 
+        $btnMessage = '';
+
         if (!$has_methods)
-          $BtnMessage = 'You need to add a valid credit card in order to bid. Please go to payment method in My Account';
+          $btnMessage = 'You need to add a valid credit card in order to bid. Please go to payment method in My Account';
         else if (!empty($check_user_bid))
-          $BtnMessage = 'You already bid for this product. Wait for the admin to approve your bid.';
+          $btnMessage = 'You already bid for this product. Wait for the admin to approve your bid.';
+
 
         if ($product->get_type() != 'auction') {
             echo '<span class="tool-tip" title="hello world">';
-            echo '<button title="" '.$disableBtn.' type="button" data-product-id="'.$product_id.'"  style="display:none" class="bid-btn single_add_to_cart_button button alt">Bid</button>';
+            echo '<button title="'.$btnMessage.'" '.$disableBtn.' type="button" data-product-id="'.$product_id.'"  style="display:none" class="bid-btn single_add_to_cart_button button alt">Bid</button>';
             echo '</span>';
         }
     }
