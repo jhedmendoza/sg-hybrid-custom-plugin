@@ -216,9 +216,7 @@ class Auction {
         }
 
         if ($product->get_type() != 'auction') {
-            echo '<span class="tool-tip" title="hello world">';
             echo '<button title="'.$btnMessage.'" '.$disableBtn.' type="button" data-product-id="'.$product_id.'"  style="display:none" class="bid-btn single_add_to_cart_button button alt">Bid</button>';
-            echo '</span>';
         }
     }
 }
