@@ -1,9 +1,7 @@
 (function ($) {
 
   function init() {
-
-    $('.single_add_to_cart_button').tooltip();
-
+    
     // if (isUserLogin && isProductPage)
     //   checkUserBid();
 
