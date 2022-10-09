@@ -14,6 +14,8 @@ class Auction {
 
       add_action( 'woocommerce_single_product_summary',[$this, 'bid_button_on_product_page'], 32 );
 
+      add_filter('yith_wcact_add_bid', [$this, 'extend_auction_time']);
+
       add_action('init', [$this,  'set_auction']);
     }
 
@@ -193,6 +195,14 @@ class Auction {
       delete_data('yith_wcact_auction', $data, $format);
       return true;
     }
+
+    public function extend_auction_time() {
+      $date = date('Y-m-d H:i:s');
+      $product_id = $_POST['product'];
+      update_post_meta($product_id, '_yith_auction_for', strtotime($date) );
+      update_post_meta($product_id, '_yith_auction_to', strtotime('+15 minutes', strtotime($date)));
+    }
+
 
     function bid_button_on_product_page() {
         global $product;

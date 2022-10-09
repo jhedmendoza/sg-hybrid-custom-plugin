@@ -1,7 +1,7 @@
 (function ($) {
 
   function init() {
-    
+
     // if (isUserLogin && isProductPage)
     //   checkUserBid();
 
@@ -65,7 +65,6 @@
                         'disabled':true,
                         'title':'You already bid for this product. Wait for the admin to approve your bid.',
                     });
-                    .attr('disabled', true);
                   }
                   else {
                     Swal.showValidationMessage(resp.msg);
