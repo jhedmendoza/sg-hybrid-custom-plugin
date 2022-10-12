@@ -3,7 +3,6 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Auction {
 
-    //TODO: Update bid time to every 15 mins when there is succeeding bid.
     public function __construct() {
       add_action('wp_ajax_sg_user_bid', [$this, 'sg_user_bid']);
       add_action('wp_ajax_nopriv_sg_user_bid', [$this, 'sg_user_bid']);
@@ -24,7 +23,6 @@ class Auction {
           $saved_methods = wc_get_customer_saved_methods_list( get_current_user_id() );
           $has_methods   = (bool) $saved_methods;
           echo $has_methods; exit;
-          printr($saved_methods);
             // $current_date = date('Y-m-d H:i:s');
             // $product_id = 17930;
             // update_post_meta($product_id, '_yith_auction_for', strtotime($current_date) );
