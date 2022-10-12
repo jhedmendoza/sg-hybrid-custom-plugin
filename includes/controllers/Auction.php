@@ -214,15 +214,21 @@ class Auction {
         $saved_methods = wc_get_customer_saved_methods_list($user_id);
         $has_methods   = (bool) $saved_methods;
 
-        //check user if already bid on the product
-        $check_user_bid = get_user_auction('sg_hybrid_user_bid', $user_id, $product_id);
-        $disableBtn = ($has_methods && empty($check_user_bid) ) ? '' : 'disabled';
+        if ( is_user_logged_in() ) {
+          //check user if already bid on the product
+          $check_user_bid = get_user_auction('sg_hybrid_user_bid', $user_id, $product_id);
+          $disableBtn = ($has_methods && empty($check_user_bid) ) ? '' : 'disabled';
 
-        if (!$has_methods) {
-          $btnMessage = 'You need to add a valid credit card in order to bid. Please go to payment method in My Account';
+          if (!$has_methods) {
+            $btnMessage = 'You need to add a valid credit card in order to bid. Please go to payment method in My Account';
+          }
+          else if ( !empty($check_user_bid) ) {
+            $btnMessage = 'You already bid for this product. Wait for the admin to approve your bid.';
+          }
         }
-        else if ( !empty($check_user_bid) ) {
-          $btnMessage = 'You already bid for this product. Wait for the admin to approve your bid.';
+        else {
+          $btnMessage = '';
+          $disableBtn = '';
         }
 
         if ($product->get_type() != 'auction') {
