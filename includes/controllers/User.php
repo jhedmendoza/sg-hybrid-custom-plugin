@@ -67,7 +67,7 @@ class User {
 
         if( !is_wp_error($user_id) ) {
           $user = get_user_by( 'id', $user_id );
-          $user->set_role( 'subscriber' );
+          $user->set_role( 'customer' );
 
           //user auto login
            wp_signon([

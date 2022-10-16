@@ -1,7 +1,7 @@
 <?php
 if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Auction {
+class Auction extends Email {
 
     public function __construct() {
       add_action('wp_ajax_sg_user_bid', [$this, 'sg_user_bid']);
@@ -15,14 +15,15 @@ class Auction {
 
       add_filter('yith_wcact_add_bid', [$this, 'extend_auction_time']);
 
-      add_action('init', [$this,  'set_auction']);
+      add_action('template_redirect', [$this,  'set_auction']);
     }
 
     public function set_auction() {
         if (isset($_GET['dev'])) {
-          $saved_methods = wc_get_customer_saved_methods_list( get_current_user_id() );
-          $has_methods   = (bool) $saved_methods;
-          echo $has_methods; exit;
+          // $saved_methods = wc_get_customer_saved_methods_list( get_current_user_id() );
+          // $has_methods   = (bool) $saved_methods;
+          // echo $has_methods; exit;
+
             // $current_date = date('Y-m-d H:i:s');
             // $product_id = 17930;
             // update_post_meta($product_id, '_yith_auction_for', strtotime($current_date) );
@@ -93,6 +94,8 @@ class Auction {
 
     public function sg_user_bid() {
 
+      global $product;
+
       $amount     = sanitize_text_field($_POST['amount']);
       $product_id = sanitize_text_field($_POST['product_id']);
       $user_id    = get_current_user_id();
@@ -108,6 +111,9 @@ class Auction {
       if ($save) {
         $product = wc_get_product($product_id);
         $product_name = html_entity_decode($product->get_title(), ENT_COMPAT, 'UTF-8');
+
+        //send email to auction manager and bidder
+        $this->send_initial_bid_notif($user_id, $product_id, $amount);
 
         echo wp_json_encode([
           'status' => true,
@@ -137,7 +143,6 @@ class Auction {
         add_post_meta($product_id, '_yith_auction_to', strtotime('+15 minutes', strtotime($current_date)));
 
         add_post_meta($product_id, 'current_bid', $start_price);
-
         update_post_meta($product_id, '_price', $start_price); //we should update the base price of product to user's bid
 
         //we need to remove first the default product type and set it to `auction`
@@ -204,7 +209,6 @@ class Auction {
       update_post_meta($product_id, '_yith_auction_to', strtotime('+15 minutes', strtotime($date)));
     }
 
-
     function bid_button_on_product_page() {
         global $product;
         $user_id    = get_current_user_id();
@@ -236,6 +240,53 @@ class Auction {
             echo '<button title="'.$btnMessage.'" '.$disableBtn.' type="button" data-product-id="'.$product_id.'"  style="display:none" class="bid-btn single_add_to_cart_button button alt">Bid</button>';
         }
     }
+
+
+
+/********************** Email methods **********************************************************/
+//TODO: separate this methods to a new class
+
+    public function send_initial_bid_notif($user_id, $product_id, $bid) {
+      $this->initial_bid_user_template($user_id, $product_id, $bid);
+      $this->initial_bid_auction_manager_template($product_id, $bid);
+    }
+
+    public function initial_bid_user_template($user_id, $product_id, $bid) {
+      $user = get_user_by('id', $user_id);
+      $user_email = $user->user_email;
+      $product = wc_get_product($product_id);
+      $product_name = $product->get_title();
+
+      $subject = "[Scotch Galore Whiskies - The Alternative to Auctions] - Successful initial bid";
+      $headers  = '';
+      $headers .= "MIME-Version: 1.0\r\n";
+      $headers .= "Content-Type: text/html; charset=iso-8859-1\r\n";
+      $headers .= "From: postmaster@mg.scotchgalore.com\r\n";
+
+      $message.= "<p>Hi $user->user_login,</p>";
+      $message.= "<p>You successfully created an initial bid of £$bid to the product <b>$product_name</b>. Please wait for the auction manager to approve your bid.</p>";
+      mail($user_email, $subject, $message, $headers);
+    }
+
+    public function initial_bid_auction_manager_template( $product_id, $bid) {
+      $product = wc_get_product($product_id);
+      $author_id = $product->post->post_author;
+      $author = get_user_by('id', $author_id);
+      $author_email = $author->user_email;
+
+      $product_name = $product->get_title();
+
+      $subject = "[Scotch Galore Whiskies - The Alternative to Auctions] - New initial bid to a product";
+      $headers = '';
+      $headers .= "MIME-Version: 1.0\r\n";
+      $headers .= "Content-Type: text/html;charset=utf-8\r\n";
+      $headers .= "From: postmaster@mg.scotchgalore.com\r\n";
+
+      $message.= "<p>Hi $author->user_login,</p>";
+      $message.= "<p>There is a new initial bid of £$bid to the product <b>$product_name</b></p>";
+      mail($author_email, $subject, $message, $headers);
+    }
+
 }
 
 $auction = new Auction();

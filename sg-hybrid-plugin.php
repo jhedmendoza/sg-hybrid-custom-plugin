@@ -54,6 +54,7 @@ class Hybrid {
 		require_once(HYBRID_PATH.'includes/db-functions.php');
 
 		//Include controllers.
+		require_once(HYBRID_PATH.'includes/controllers/Email.php');
 		require_once(HYBRID_PATH.'includes/controllers/User.php');
     require_once(HYBRID_PATH.'includes/controllers/Auction.php');
 
