@@ -5,6 +5,10 @@
     // if (isUserLogin && isProductPage)
     //   checkUserBid();
 
+    if ( $('#winner_maximun_bid').length ) {
+      $('#yith-wcact-form-bid').hide();
+    }
+
     $('body').on('click', '.user-registration', function(e) {
       e.preventDefault();
       registerUser();
@@ -132,6 +136,7 @@
         $('.swal2-confirm').removeAttr('disabled');
       });
     }
+
 
     function checkUserBid() {
       var productID = $('button[name="add-to-cart"]').attr('value');
