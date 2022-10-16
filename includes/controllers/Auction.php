@@ -85,7 +85,7 @@ class Auction {
       if ( !empty($check_user_bid) ) {
         echo wp_json_encode([
           'status' => true,
-          'msg'    => 'User has already a bid on this product',
+          'msg'    => 'You already placed a bid on this product',
         ]);
       }
       exit;
@@ -196,7 +196,10 @@ class Auction {
 
     public function extend_auction_time() {
       $date = date('Y-m-d H:i:s');
-      $product_id = $_POST['product'];
+      $product_id = sanitize_text_field($_POST['product']);
+      $bid  = sanitize_text_field($_POST['bid']);
+
+      update_post_meta($product_id, '_price', $bid);
       update_post_meta($product_id, '_yith_auction_for', strtotime($date) );
       update_post_meta($product_id, '_yith_auction_to', strtotime('+15 minutes', strtotime($date)));
     }
@@ -221,7 +224,7 @@ class Auction {
             $btnMessage = 'You need to add a valid credit card in order to bid. Please go to payment method in My Account';
           }
           else if ( !empty($check_user_bid) ) {
-            $btnMessage = 'You already bid for this product. Wait for the admin to approve your bid.';
+            $btnMessage = 'You already bid for this product. Wait for the auction manager to approve your bid.';
           }
         }
         else {
