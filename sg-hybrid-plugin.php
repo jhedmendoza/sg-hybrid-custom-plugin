@@ -83,20 +83,20 @@ class Hybrid {
 		// global $wpdb;
 		// $table_membership_level = $wpdb->prefix . 'membership_level';
 		// $table_logo_manager = $wpdb->prefix . 'logo_manager';
-
-
+		//
+		//
 		// $charset_collate = $wpdb->get_charset_collate();
-
+		//
 		// $sql[] = "CREATE TABLE $table_membership_level (
 		// 	id INT (11) AUTO_INCREMENT,
 		// 	membership_name VARCHAR(100),
 		// 	membership_code VARCHAR(100),
 		// 	PRIMARY KEY (id)
 		// ) $charset_collate";
-
+		//
 		// require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		// dbDelta($sql) ;
-
+		//
 		// add_option('hybrid_db_version', HYBRID_VERSION);
 	}
 

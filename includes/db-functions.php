@@ -33,7 +33,7 @@ function delete_data($table_name, $where, $format) {
   return $wpdb->delete($wpdb->prefix.$table_name, $where);
 }
 
-function get_all_data($table_name) {
+function get_all_data($table_name, $group_by='') {
 
 	global $wpdb;
 
@@ -45,10 +45,17 @@ function get_all_data($table_name) {
 	$offset = ( $page * $items_per_page ) - $items_per_page;
 
 	$query = "SELECT * FROM $table";
-	$results = $wpdb->get_results($query. " ORDER BY date DESC LIMIT ${offset}, ${items_per_page}");
+
+	$group_query = '';
+
+	if ($group_by)
+		$group_query = 'GROUP BY '.$group_by;
+
+	$results = $wpdb->get_results($query . " $group_query ORDER BY date DESC LIMIT ${offset}, ${items_per_page}");
 
 	foreach ($results as $key => $result) {
 			$data['data'][$key] = $result;
+			$data['data'][$key]->total_bidders = count_product_bidders($result->product_id);
 	}
 
 	$data['pagination']['total'] = $total;
@@ -56,6 +63,13 @@ function get_all_data($table_name) {
 	$data['pagination']['items_per_page'] = $items_per_page;
 
 	return $data;
+}
+
+function count_product_bidders($product_id) {
+	global $wpdb;
+	$table = $wpdb->prefix.'sg_hybrid_user_bid';
+	$total = $wpdb->get_var("SELECT COUNT(*) AS total_bidders FROM $table WHERE product_id = $product_id GROUP BY product_id");
+	return $total;
 }
 
 function get_user_auction($table_name, $user_id, $product_id) {

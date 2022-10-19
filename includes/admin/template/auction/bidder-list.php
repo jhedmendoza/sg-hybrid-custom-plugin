@@ -2,11 +2,11 @@
   <div class="container mt-3">
 
     <div class="row">
-
-     <div class="col">
-      <h4 class="mb-4">Auction Requests</h4>
+      <a href="<?php echo admin_url('admin.php?page=sg-auction-products') ?>" class="">Back to auction list</a>
     </div>
 
+    <div class="row">
+       <h5 class="mb-4 bg-secondary p-1 text-white">Bidders on Ardbeg Fermutation I.D. No: 2193</h5>
     </div>
 
     <div class="row">
@@ -15,28 +15,26 @@
         <thead>
           <tr>
             <th scope="col">Username</th>
-            <th scope="col">Product ID</th>
             <th scope="col">Product Name</th>
             <th scope="col">Bid Price</th>
             <th scope="col">Date Created</th>
             <th scope="col">Status</th>
-            <!-- <th scope="col">Action</th> -->
+            <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
-          <?php if ( isset($attributes['users']) && !empty($attributes['users']) ): ?>
-            <?php foreach($attributes['users'] as $key => $value): ?>
+          <?php if ( isset($attributes['bidders']) && !empty($attributes['bidders']) ): ?>
+            <?php foreach($attributes['bidders'] as $key => $value): ?>
             <tr>
               <td><?php echo $value['user_name']; ?></td>
-              <td><?php echo $value['product_id'] ?></td>
               <td><a class="product-name" target="_blank" href="<?php echo get_permalink($value['product_id']) ?>"><?php echo $value['product_name']; ?></a></td>
               <td>£<?php echo $value['amount'] ?></td>
               <td><?php echo $value['date']; ?></td>
               <td>
-                <input class="chk-status" <?php echo $value['status'] ? 'checked' : '' ?> type="checkbox" data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" data-toggle="toggle" data-size="sm" data-on="Approved" data-off="Rejected" />
+                <span data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" class="badge bg-secondary">Pending</span>
               </td>
               <td>
-                <!-- <button class="btn btn-danger btn-delete btn-sm">Delete</button> -->
+                <button class="btn btn-primary btn-approve btn-sm">Approve</button>
               </td>
             </tr>
             <?php endforeach; ?>
