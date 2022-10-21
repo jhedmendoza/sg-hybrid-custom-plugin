@@ -76,7 +76,8 @@ class Auction extends Email {
           }
           exit;
         }
-      }
+    }
+
     public function check_user_first_bid_attempt_status() {
 
       $product_id = sanitize_text_field($_POST['product_id']);

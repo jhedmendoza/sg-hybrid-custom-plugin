@@ -92,9 +92,9 @@ function sg_bidder_list() {
   $requests = new AuctionRequests();
   $data = $requests->get_all_user_auction_requests();
 
-  if ( isset($data['data']) && !empty($data['data']) ) {
+  if ( isset($data) && !empty($data) ) {
 
-    foreach($data['data'] as $value) {
+    foreach($data as $value) {
 
       $product_id = $value->product_id;
       $user_id    = $value->user_id;

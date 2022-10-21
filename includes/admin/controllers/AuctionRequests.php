@@ -4,7 +4,8 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class AuctionRequests {
 
   public function get_all_user_auction_requests() {
-    $requests = get_all_data('sg_hybrid_user_bid', 'product_id');
+    $product_id = $_GET['product_id'];
+    $requests = get_product_bidders('sg_hybrid_user_bid', $product_id);
     return $requests;
   }
 
@@ -13,6 +14,8 @@ class AuctionRequests {
     $requests = get_all_data('sg_hybrid_user_bid', 'product_id');
     return $requests;
   }
+
+
 
 }
 

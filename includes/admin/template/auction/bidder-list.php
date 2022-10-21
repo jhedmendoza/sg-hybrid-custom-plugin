@@ -2,12 +2,14 @@
   <div class="container mt-3">
 
     <div class="row">
-      <a href="<?php echo admin_url('admin.php?page=sg-auction-products') ?>" class="">Back to auction list</a>
+      <a href="<?php echo admin_url('admin.php?page=sg-auction-products') ?>" class="ps-0 pb-3">Back to auction list</a>
     </div>
 
     <div class="row">
        <h5 class="mb-4 bg-secondary p-1 text-white">Bidders on Ardbeg Fermutation I.D. No: 2193</h5>
     </div>
+
+    Initial bid
 
     <div class="row">
 

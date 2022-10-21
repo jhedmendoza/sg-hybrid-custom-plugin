@@ -79,3 +79,11 @@ function get_user_auction($table_name, $user_id, $product_id) {
 	$result = $wpdb->get_row($query);
 	return $result;
 }
+
+function get_product_bidders($table_name, $product_id) {
+	global $wpdb;
+	$table = $wpdb->prefix.$table_name;
+	$query = "SELECT * FROM $table WHERE product_id = $product_id";
+	$result = $wpdb->get_results($query);
+	return $result;
+}
