@@ -87,3 +87,19 @@ function get_product_bidders($table_name, $product_id) {
 	$result = $wpdb->get_results($query);
 	return $result;
 }
+
+function get_rejected_product_bidders($product_id) {
+	global $wpdb;
+	$table = $wpdb->prefix.'sg_hybrid_user_bid';
+	$query = "SELECT * FROM $table WHERE product_id = $product_id AND status = 0";
+	$result = $wpdb->get_results($query);
+	return $result;
+}
+
+function get_watchlist($product_id) {
+	global $wpdb;
+	$table = $wpdb->prefix.'yith_wcact_watchlist';
+	$query = "SELECT * FROM $table WHERE auction_id = $product_id";
+	$result = $wpdb->get_results($query);
+	return $result;
+}

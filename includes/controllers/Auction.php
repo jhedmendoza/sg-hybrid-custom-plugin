@@ -8,8 +8,8 @@ class Auction extends Email {
       add_action('wp_ajax_nopriv_sg_user_bid', [$this, 'sg_user_bid']);
       add_action('wp_ajax_check_user_first_bid_attempt_status', [$this, 'check_user_first_bid_attempt_status']);
       add_action('wp_ajax_nopriv_check_user_first_bid_attempt_status', [$this, 'check_user_first_bid_attempt_status']);
-      add_action('wp_ajax_approve_reject_user_auction', [$this, 'approve_reject_user_auction']);
-      add_action('wp_ajax_nopriv_approve_reject_user_auction', [$this, 'approve_reject_user_auction']);
+      add_action('wp_ajax_approve_user_auction', [$this, 'approve_user_auction']);
+      add_action('wp_ajax_nopriv_approve_user_auction', [$this, 'approve_user_auction']);
 
       add_action( 'woocommerce_single_product_summary',[$this, 'bid_button_on_product_page'], 32 );
 
@@ -31,7 +31,7 @@ class Auction extends Email {
         }
     }
 
-    public function approve_reject_user_auction() {
+    public function approve_user_auction() {
       $product_id = sanitize_text_field($_POST['product_id']);
       $user_id    = sanitize_text_field($_POST['user_id']);
       $bid_price  = sanitize_text_field($_POST['bid_price']);
@@ -45,9 +45,13 @@ class Auction extends Email {
 
 
         if ($auctionEnabledToUser && $userStatus) {
+
+          //send email to product bidders and watchlist
+          $this->send_approved_bid_notif($user_id, $product_id, $bid_price);
+
           echo wp_json_encode([
             'status' => true,
-            'msg'    => 'User successfully bid to this product',
+            'msg'    => 'You successfully approve this user\'s bid',
           ]);
         }
         else {
@@ -58,24 +62,24 @@ class Auction extends Email {
         }
         exit;
       }
-      else {
-          $userStatus = $this->update_user_status($product_id, $user_id, 0);
-          $delete = $this->delete_user_and_product_auction_data($product_id, $user_id);
-
-          if ($userStatus && $delete) {
-            echo wp_json_encode([
-              'status' => true,
-              'msg'    => 'User successfully rejected',
-            ]);
-          }
-          else {
-            echo wp_json_encode([
-              'status' => false,
-              'msg'    => 'Something went wrong. Please try again later.',
-            ]);
-          }
-          exit;
-        }
+      // else {
+      //     $userStatus = $this->update_user_status($product_id, $user_id, 0);
+      //     $delete = $this->delete_user_and_product_auction_data($product_id, $user_id);
+      //
+      //     if ($userStatus && $delete) {
+      //       echo wp_json_encode([
+      //         'status' => true,
+      //         'msg'    => 'User successfully rejected',
+      //       ]);
+      //     }
+      //     else {
+      //       echo wp_json_encode([
+      //         'status' => false,
+      //         'msg'    => 'Something went wrong. Please try again later.',
+      //       ]);
+      //     }
+      //     exit;
+      //   }
     }
 
     public function check_user_first_bid_attempt_status() {
@@ -252,6 +256,25 @@ class Auction extends Email {
       $this->initial_bid_auction_manager_template($product_id, $bid);
     }
 
+    public function send_approved_bid_notif($user_id, $product_id, $bid) {
+      $watchlist = get_watchlist($product_id);
+      $rejected_users = get_rejected_product_bidders($product_id);
+
+      //send email to
+      foreach($rejected_users as $rejected) {
+        $user = get_user_by('id', $rejected->user_id);
+        $user_email = $user->user_email;
+        do_action( 'yith_wcact_email_new_bid', (int) $user_id->user_id, $product_id, []);
+      }
+
+      //send email to watchlist
+      foreach ($watchlist as $wl) {
+        do_action( 'yith_wcact_email_new_bid', (int) $wl->user_id, $product_id, []);
+      }
+
+      $this->approved_bid_template();
+    }
+
     public function initial_bid_user_template($user_id, $product_id, $bid) {
       $user = get_user_by('id', $user_id);
       $user_email = $user->user_email;
@@ -288,6 +311,25 @@ class Auction extends Email {
       mail($author_email, $subject, $message, $headers);
     }
 
+    // public function approved_bid_template() {
+    //   $product = wc_get_product($product_id);
+    //   $author_id = $product->post->post_author;
+    //   $author = get_user_by('id', $author_id);
+    //   $author_email = $author->user_email;
+    //
+    //   $product_name = $product->get_title();
+    //
+    //   $subject = "[Scotch Galore Whiskies - The Alternative to Auctions] - New bid to a product";
+    //   $headers = '';
+    //   $headers .= "MIME-Version: 1.0\r\n";
+    //   $headers .= "Content-Type: text/html;charset=utf-8\r\n";
+    //   $headers .= "From: postmaster@mg.scotchgalore.com\r\n";
+    //
+    //   $message.= "<p>Hi $author->user_login,</p>";
+    //   $message.= "<p>There is a new bid to the product <b>$product_name</b></p>";
+    //   $meesage.= "<p>Current bid: £$bid</p>";
+    //   mail($author_email, $subject, $message, $headers);
+    // }
 }
 
 $auction = new Auction();
