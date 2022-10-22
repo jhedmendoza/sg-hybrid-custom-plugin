@@ -30,7 +30,7 @@
                 <span data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" class="badge bg-secondary">Sold</span>
               </td>
               <td>
-                <a href="<?php echo admin_url('admin.php?page=sg-bidder-list&action=bidders&product_id='.$value['product_id']) ?>" class="btn btn-primary btn-approve btn-sm">View</a>
+                <a href="<?php echo admin_url('admin.php?page=sg-bidder-list&action=bidders&product_id='.$value['product_id']) ?>" class="btn btn-primary btn-sm">View</a>
               </td>
             </tr>
             <?php endforeach; ?>

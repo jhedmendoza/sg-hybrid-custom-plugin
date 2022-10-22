@@ -115,7 +115,8 @@ function sg_bidder_list() {
 
   }
   $result = [
-    'bidders'   => $bidders,
+    'bidders'    => $bidders,
+    'product_id' => filter_input(INPUT_GET, 'product_id')
   ];
     hybrid_include('includes/admin/template/auction/bidder-list.php', $result);
 }

@@ -1,3 +1,8 @@
+<?php
+$has_product_bid = get_post_meta($attributes['product_id'], 'yith_wcact_new_bid', true);
+?>
+
+
 <div class="wrapper fc-wrapper">
   <div class="container mt-3">
 
@@ -6,10 +11,10 @@
     </div>
 
     <div class="row">
-       <h5 class="mb-4 bg-secondary p-1"><a class="text-white text-decoration-none" href="<?php echo get_permalink($attributes['bidders'][0]['product_id']) ?>" target="_blank"><?php echo $attributes['bidders'][0]['product_name'] ?></a></h5>
+       <h5 class="mb-4 bg-secondary p-1"><a class="text-white text-decoration-none" href="<?php echo get_permalink($attributes['product_id']) ?>" target="_blank"><?php echo $attributes['bidders'][0]['product_name'] ?></a></h5>
     </div>
 
-    <?php if (1): ?>
+    <?php if ($has_product_bid): ?>
     <div class="running-bids">
       <div class="row">
         <h5 class="ps-0 pb-0">Running Bid</h5>
@@ -19,6 +24,7 @@
             <thead>
               <tr>
                 <th scope="col">Username</th>
+                <th scope="col">User ID</th>
                 <th scope="col">Bid Price</th>
                 <th scope="col">Date Created</th>
                 <th scope="col">Status</th>
@@ -29,6 +35,7 @@
                 <?php foreach($attributes['bidders'] as $key => $value): ?>
                 <tr>
                   <td class="bidder-name"><?php echo $value['user_name']; ?></td>
+                  <td><?php echo $value['user_id']; ?></td>
                   <td>£<?php echo $value['amount'] ?></td>
                   <td><?php echo $value['date']; ?></td>
                   <td>
@@ -57,14 +64,17 @@
         <h5 class="ps-0 pb-0">Initial bid</h5>
       </div>
       <div class="row">
-        <table class="table table-striped table-logo_manager"><!--table-secondary-->
+        <table class="table table-striped table-logo_manager <?php echo $has_product_bid ? 'table-secondary' : '' ?>">
             <thead>
               <tr>
                 <th scope="col">Username</th>
+                <th scope="col">User ID</th>
                 <th scope="col">Bid Price</th>
                 <th scope="col">Date Created</th>
                 <th scope="col">Status</th>
-                <th scope="col">Action</th>
+                <?php if (!$has_product_bid): ?>
+                  <th scope="col">Status</th>
+                <?php endif; ?>
               </tr>
             </thead>
             <tbody>
@@ -72,14 +82,19 @@
                 <?php foreach($attributes['bidders'] as $key => $value): ?>
                 <tr>
                   <td class="bidder-name"><?php echo $value['user_name']; ?></td>
+                  <td><?php echo $value['user_id']; ?></td>
                   <td>£<?php echo $value['amount'] ?></td>
                   <td><?php echo $value['date']; ?></td>
                   <td>
-                    <span class="badge bg-secondary"><?php echo ($value['status']) ? 'Approved' : 'Pending' ?></span>
+                    <span class="badge bg-secondary"><?php echo ($value['status'] && $has_product_bid) ? 'Approved' : '' ?></span>
                   </td>
+
+                  <?php if (!$has_product_bid): ?>
                   <td>
-                    <button  data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" class="btn btn-primary btn-approve btn-sm">Approve</button>
+                    <button data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" class="btn btn-primary btn-approve btn-sm">Approve</button>
                   </td>
+                  <?php endif; ?>
+
                 </tr>
                 <?php endforeach; ?>
               <?php else: ?>

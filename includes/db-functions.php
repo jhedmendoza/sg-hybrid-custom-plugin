@@ -103,3 +103,10 @@ function get_watchlist($product_id) {
 	$result = $wpdb->get_results($query);
 	return $result;
 }
+
+function get_product_status() {
+}
+
+function get_bidder_status() {
+	
+}
