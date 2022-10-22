@@ -3,6 +3,14 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Auction extends Email {
 
+    /*TODO:
+        1. Filter the products to it's product creator (user management)
+        2. Add watchlist functionality
+        3. Create function for setting product status and bidder status
+    **/
+
+
+
     public function __construct() {
       add_action('wp_ajax_sg_user_bid', [$this, 'sg_user_bid']);
       add_action('wp_ajax_nopriv_sg_user_bid', [$this, 'sg_user_bid']);
@@ -20,6 +28,9 @@ class Auction extends Email {
 
     public function set_auction() {
         if (isset($_GET['dev'])) {
+
+            // do_action( 'yith_wcact_email_new_bid', 11, 18630, []);
+
           // $saved_methods = wc_get_customer_saved_methods_list( get_current_user_id() );
           // $has_methods   = (bool) $saved_methods;
           // echo $has_methods; exit;
@@ -42,7 +53,6 @@ class Auction extends Email {
         $this->enable_auction_to_product($product_id, $bid_price);
         $userStatus = $this->update_user_status($product_id, $user_id, 1);
         $auctionEnabledToUser = $this->enable_auction_to_user($user_id, $product_id, $bid_price);
-
 
         if ($auctionEnabledToUser && $userStatus) {
 
@@ -260,19 +270,18 @@ class Auction extends Email {
       $watchlist = get_watchlist($product_id);
       $rejected_users = get_rejected_product_bidders($product_id);
 
+      //send email to watchlist
+      if ( isset($watchlist) && !empty($watchlist) ) {
+        foreach ($watchlist as $wl) {
+          $this->approved_bid_template($watchlist->user_id, $product_id, $bid);
+        }
+      }
+
       //send email to
       foreach($rejected_users as $rejected) {
-        $user = get_user_by('id', $rejected->user_id);
-        $user_email = $user->user_email;
-        do_action( 'yith_wcact_email_new_bid', (int) $user_id->user_id, $product_id, []);
+        $this->approved_bid_template($rejected->user_id, $product_id, $bid);
       }
 
-      //send email to watchlist
-      foreach ($watchlist as $wl) {
-        do_action( 'yith_wcact_email_new_bid', (int) $wl->user_id, $product_id, []);
-      }
-
-      $this->approved_bid_template();
     }
 
     public function initial_bid_user_template($user_id, $product_id, $bid) {
@@ -289,6 +298,7 @@ class Auction extends Email {
 
       $message.= "<p>Hi $user->user_login,</p>";
       $message.= "<p>You successfully created an initial bid of £$bid to the product <b>$product_name</b>. Please wait for the auction manager to approve your bid.</p>";
+
       mail($user_email, $subject, $message, $headers);
     }
 
@@ -311,25 +321,24 @@ class Auction extends Email {
       mail($author_email, $subject, $message, $headers);
     }
 
-    // public function approved_bid_template() {
-    //   $product = wc_get_product($product_id);
-    //   $author_id = $product->post->post_author;
-    //   $author = get_user_by('id', $author_id);
-    //   $author_email = $author->user_email;
-    //
-    //   $product_name = $product->get_title();
-    //
-    //   $subject = "[Scotch Galore Whiskies - The Alternative to Auctions] - New bid to a product";
-    //   $headers = '';
-    //   $headers .= "MIME-Version: 1.0\r\n";
-    //   $headers .= "Content-Type: text/html;charset=utf-8\r\n";
-    //   $headers .= "From: postmaster@mg.scotchgalore.com\r\n";
-    //
-    //   $message.= "<p>Hi $author->user_login,</p>";
-    //   $message.= "<p>There is a new bid to the product <b>$product_name</b></p>";
-    //   $meesage.= "<p>Current bid: £$bid</p>";
-    //   mail($author_email, $subject, $message, $headers);
-    // }
+    public function approved_bid_template($user_id, $product_id, $bid) {
+
+      $user = get_user_by('id', $user_id);
+      $user_email = $user->user_email;
+      $product = wc_get_product($product_id);
+      $product_name = $product->get_title();
+
+      $subject = "[Scotch Galore Whiskies - The Alternative to Auctions] - New bid to a product";
+      $headers = '';
+      $headers .= "MIME-Version: 1.0\r\n";
+      $headers .= "Content-Type: text/html;charset=utf-8\r\n";
+      $headers .= "From: postmaster@mg.scotchgalore.com\r\n";
+
+      $message.= "<p>Hi $user->user_login,</p>";
+      $message.= "<p>There is a new bid to the product <b>$product_name</b></p>";
+      $message.= "<p>Current bid: £$bid</p>";
+      mail($user_email, $subject, $message, $headers);
+    }
 }
 
 $auction = new Auction();
