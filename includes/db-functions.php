@@ -36,6 +36,7 @@ function delete_data($table_name, $where, $format) {
 function get_all_data($table_name, $group_by='') {
 
 	global $wpdb;
+	global $product;
 
 	$table = $wpdb->prefix.$table_name;
 
@@ -52,10 +53,21 @@ function get_all_data($table_name, $group_by='') {
 		$group_query = 'GROUP BY '.$group_by;
 
 	$results = $wpdb->get_results($query . " $group_query ORDER BY date DESC LIMIT ${offset}, ${items_per_page}");
+	$current_user_id = get_current_user_id();
+  $user_meta = get_userdata($current_user_id);
+	$user_roles = $user_meta->roles;
 
 	foreach ($results as $key => $result) {
-			$data['data'][$key] = $result;
-			$data['data'][$key]->total_bidders = count_product_bidders($result->product_id);
+
+			$shop_manager = get_post_meta($result->product_id, 'shop_manager', true);
+
+			//show only the list of product that belongs to shop manager or if user type is an administrator
+			if ($shop_manager == $current_user_id || in_array('administrator', $user_roles)) {
+				$data['data'][$key] = $result;
+				$data['data'][$key]->total_bidders = count_product_bidders($result->product_id);
+			}
+
+
 	}
 
 	$data['pagination']['total'] = $total;
@@ -108,5 +120,5 @@ function get_product_status() {
 }
 
 function get_bidder_status() {
-	
+
 }
