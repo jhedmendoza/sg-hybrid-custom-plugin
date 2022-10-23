@@ -40,8 +40,14 @@ function get_all_data($table_name, $group_by='') {
 
 	$table = $wpdb->prefix.$table_name;
 
+	$current_user_id = get_current_user_id();
+	$user_meta = get_userdata($current_user_id);
+	$user_roles = $user_meta->roles;
+
 	$items_per_page = 10;
+
 	$total = $wpdb->get_var("SELECT COUNT(1) FROM $table");
+
 	$page = isset($_GET['cpage'] ) ? abs( (int) $_GET['cpage'] ) : 1;
 	$offset = ( $page * $items_per_page ) - $items_per_page;
 
@@ -53,9 +59,7 @@ function get_all_data($table_name, $group_by='') {
 		$group_query = 'GROUP BY '.$group_by;
 
 	$results = $wpdb->get_results($query . " $group_query ORDER BY date DESC LIMIT ${offset}, ${items_per_page}");
-	$current_user_id = get_current_user_id();
-  $user_meta = get_userdata($current_user_id);
-	$user_roles = $user_meta->roles;
+
 
 	foreach ($results as $key => $result) {
 
@@ -66,7 +70,6 @@ function get_all_data($table_name, $group_by='') {
 				$data['data'][$key] = $result;
 				$data['data'][$key]->total_bidders = count_product_bidders($result->product_id);
 			}
-
 
 	}
 
@@ -116,9 +119,28 @@ function get_watchlist($product_id) {
 	return $result;
 }
 
-function get_product_status() {
+function get_product_status($product_id) {
+
+	global $wpdb;
+	$product_auctioned_table = $wpdb->prefix.'wp_yith_wcact_auction';
+	$user_has_paid = get_post_meta($product_id, '_yith_auction_paid_order', true);
+
+	if ( empty($user_has_paid) )
+		return 'Ongoing Auction';
+
+	if ( strtolower($user_has_paid) == 'yes' )
+		return 'Sold';
+
+	if ( strtolower($user_has_paid) == 'no' )
+		return 'Awaiting Payment';
+
 }
 
-function get_bidder_status() {
+function get_bidder_status($product_id, $status) {
+
+	if ($status)
+		return 'Approved';
+	else
+		return 'Pending';
 
 }

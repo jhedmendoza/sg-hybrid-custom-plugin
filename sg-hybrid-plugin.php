@@ -24,6 +24,10 @@ class Hybrid {
 
 	function initialize() {
 
+		//allow shop manager user type to access the plugin
+		$role = get_role('shop_manager');
+		$role->add_cap('manage_options');
+
 		switch ($_SERVER['SERVER_NAME']) {
 
 			case 'scotchgalore-careers.local':

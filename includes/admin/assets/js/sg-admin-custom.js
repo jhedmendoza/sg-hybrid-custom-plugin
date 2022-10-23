@@ -34,8 +34,14 @@
                     text: resp.msg,
                     showConfirmButton: true,
                   });
+                  location.reload();
                 }
                 else {
+                  Swal.fire({
+                    icon: 'error',
+                    text: resp.msg,
+                    showConfirmButton: true,
+                  });
                 }
               }
           });

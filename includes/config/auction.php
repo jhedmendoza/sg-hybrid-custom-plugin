@@ -27,7 +27,7 @@ return [
     '_yith_wcact_send_winner_email'                      => 'yes',
     '_yith_wcact_send_admin_winner_email'                => 'yes',
     '_yith_wcact_payment_gateway'                        => 'none',
-    '_yith_is_an_auction_product'                        => '1',
+    '_yith_is_an_auction_product'                        => true,
     'yith_wcact_new_bid'                                 => true
 ];
 ?>

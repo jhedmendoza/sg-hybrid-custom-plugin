@@ -27,7 +27,7 @@
               <td>£<?php echo $value['amount'] ?></td>
               <td><span class="badge bg-danger"><?php echo $value['total_bidders'] ?></span></td>
               <td>
-                <span data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" class="badge bg-secondary">Sold</span>
+                <span data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" class="badge bg-secondary"><?php echo $value['product_status'] ?></span>
               </td>
               <td>
                 <a href="<?php echo admin_url('admin.php?page=sg-bidder-list&action=bidders&product_id='.$value['product_id']) ?>" class="btn btn-primary btn-sm">View</a>

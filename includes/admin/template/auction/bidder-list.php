@@ -1,5 +1,11 @@
 <?php
 $has_product_bid = get_post_meta($attributes['product_id'], 'yith_wcact_new_bid', true);
+$terms =  get_the_terms($attributes['product_id'], 'yith_wcact_auction_status');
+if (isset($_GET['test-admin'])) {
+  printr($terms);
+}
+
+
 ?>
 
 

@@ -3,14 +3,6 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Auction extends Email {
 
-    /*TODO:
-        1. Filter the products to it's product creator (user management)
-        2. Add watchlist functionality
-        3. Create function for setting product status and bidder status
-    **/
-
-
-
     public function __construct() {
       add_action('wp_ajax_sg_user_bid', [$this, 'sg_user_bid']);
       add_action('wp_ajax_nopriv_sg_user_bid', [$this, 'sg_user_bid']);
@@ -28,6 +20,12 @@ class Auction extends Email {
 
     public function set_auction() {
         if (isset($_GET['dev'])) {
+
+          // wp_set_post_terms(18488, 'finished', 'yith_wcact_auction_status', false );
+
+          $terms = get_the_terms(18488, 'yith_wcact_auction_status');
+          printr($terms);
+
 
             // do_action( 'yith_wcact_email_new_bid', 11, 18630, []);
 
@@ -162,7 +160,8 @@ class Auction extends Email {
 
         //we need to remove first the default product type and set it to `auction`
         // wp_remove_object_terms( $product_id, 'simple', 'product_type' );
-        wp_set_object_terms( $product_id, 'auction', 'product_type', false );
+        wp_set_object_terms($product_id, 'auction', 'product_type', false );
+        wp_set_object_terms($product_id, 'started', 'yith_wcact_auction_status', false );
 
     }
 
@@ -304,10 +303,10 @@ class Auction extends Email {
 
     public function initial_bid_auction_manager_template( $product_id, $bid) {
       $product = wc_get_product($product_id);
-      $author_id = $product->post->post_author;
-      $author = get_user_by('id', $author_id);
-      $author_email = $author->user_email;
 
+      $manager_id = get_post_custom_values('shop_manager', $product_id)[0];
+      $shop_manager = get_user_by('id', $manager_id);
+      $shop_manager_email = $shop_manager->user_email;
       $product_name = $product->get_title();
 
       $subject = "[Scotch Galore Whiskies - The Alternative to Auctions] - New initial bid to a product";
@@ -316,9 +315,9 @@ class Auction extends Email {
       $headers .= "Content-Type: text/html;charset=utf-8\r\n";
       $headers .= "From: postmaster@mg.scotchgalore.com\r\n";
 
-      $message.= "<p>Hi $author->user_login,</p>";
+      $message.= "<p>Hi $shop_manager->user_login,</p>";
       $message.= "<p>There is a new initial bid of £$bid to the product <b>$product_name</b></p>";
-      mail($author_email, $subject, $message, $headers);
+      mail($shop_manager_email, $subject, $message, $headers);
     }
 
     public function approved_bid_template($user_id, $product_id, $bid) {

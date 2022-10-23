@@ -65,14 +65,15 @@ function sg_product_auction_list() {
       $user = get_user_by('id', $user_id);
 
       $products[] = array(
-        'product_id'   => $product_id,
-        'product_name' => $product->get_title(),
-        'user_id'      => $user_id,
-        'user_name'    => $user->data->display_name,
-        'amount'       => number_format((float)$value->bid, 2, '.', ''),
-        'status'       => $value->status,
-        'total_bidders'=> $value->total_bidders,
-        'date'         => $value->date,
+        'product_id'     => $product_id,
+        'product_name'   => $product->get_title(),
+        'user_id'        => $user_id,
+        'user_name'      => $user->data->display_name,
+        'amount'         => number_format((float)$value->bid, 2, '.', ''),
+        'status'         => $value->status,
+        'total_bidders'  => $value->total_bidders,
+        'date'           => $value->date,
+        'product_status' => get_product_status($value->product_id)
       );
     }
 
