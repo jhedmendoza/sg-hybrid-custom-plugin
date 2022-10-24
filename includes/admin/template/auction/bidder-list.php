@@ -132,8 +132,8 @@ if (isset($_GET['test-admin'])) {
               </tr>
             </thead>
             <tbody>
-              <?php if ( isset($attributes['bidders']) && !empty($attributes['bidders']) ): ?>
-                <?php foreach($attributes['bidders'] as $key => $value): ?>
+              <?php if ( isset($attributes['initial_bidders']) && !empty($attributes['initial_bidders']) ): ?>
+                <?php foreach($attributes['initial_bidders'] as $key => $value): ?>
                 <tr>
                   <td class="bidder-name"><?php echo $value['user_name']; ?></td>
                   <td><?php echo $value['user_id']; ?></td>

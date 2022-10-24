@@ -91,13 +91,9 @@ function sg_product_auction_list() {
 
 function sg_bidder_list() {
   $product_id = filter_input(INPUT_GET, 'product_id');
-  $terms =  get_the_terms($product_id, 'yith_wcact_auction_status');
-  $auction_status = $terms[0]->slug;
-
-  if ($auction_status == 'finished') {
-    $instance  = YITH_Auctions()->bids;
-    $bids      = $instance->get_bids_auction($product_id);
-    $max_bidder= $instance->get_max_bid( $product_id );
+  $instance  = YITH_Auctions()->bids;
+  $bids      = $instance->get_bids_auction($product_id);
+  $max_bidder= $instance->get_max_bid( $product_id );
 
     foreach ($bids as $bid) {
       $product_id = $bid->auction_id;
@@ -116,8 +112,7 @@ function sg_bidder_list() {
         'status'      => ($max_bidder->user_id == $user_id) ? 'Won' : ''
       );
     }
-  }
-  else {
+
 
     $requests = new AuctionRequests();
     $data = $requests->get_all_user_auction_requests();
@@ -132,7 +127,7 @@ function sg_bidder_list() {
         $product = wc_get_product($product_id);
         $user = get_user_by('id', $user_id);
 
-        $bidders[] = array(
+        $initial_bidders[] = array(
           'product_id'  => $product_id,
           'product_name'=> $product->get_title(),
           'user_id'     => $user_id,
@@ -144,11 +139,12 @@ function sg_bidder_list() {
         );
       }
     }
-  }
+
 
   $result = [
-    'bidders'    => $bidders,
-    'product_id' => $product_id
+    'bidders'         => $bidders,
+    'initial_bidders' => $initial_bidders,
+    'product_id'      => $product_id
   ];
     hybrid_include('includes/admin/template/auction/bidder-list.php', $result);
 }
