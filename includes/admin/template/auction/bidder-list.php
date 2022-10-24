@@ -1,6 +1,8 @@
 <?php
 $has_product_bid = get_post_meta($attributes['product_id'], 'yith_wcact_new_bid', true);
 $terms =  get_the_terms($attributes['product_id'], 'yith_wcact_auction_status');
+$auction_status = $terms[0]->slug;
+
 if (isset($_GET['test-admin'])) {
   printr($terms);
 }
@@ -23,7 +25,7 @@ if (isset($_GET['test-admin'])) {
     <?php if ($has_product_bid): ?>
     <div class="running-bids">
       <div class="row">
-        <h5 class="ps-0 pb-0">Running Bid</h5>
+        <h5 class="ps-0 pb-0"><?php echo $auction_status == 'finished' ? 'Offer' : 'Running Bids' ?></h5>
       </div>
       <div class="row">
         <table class="table table-striped table-logo_manager">
@@ -45,7 +47,7 @@ if (isset($_GET['test-admin'])) {
                   <td>£<?php echo $value['amount'] ?></td>
                   <td><?php echo $value['date']; ?></td>
                   <td>
-                    <span class="badge bg-secondary"><?php echo ($value['status']) ? 'Ongoing bid' : '' ?></span>
+                    <span class="badge bg-secondary"><?php echo $value['bidder_status'] ?></span>
                   </td>
                 </tr>
                 <?php endforeach; ?>
@@ -92,7 +94,7 @@ if (isset($_GET['test-admin'])) {
                   <td>£<?php echo $value['amount'] ?></td>
                   <td><?php echo $value['date']; ?></td>
                   <td>
-                    <span class="badge bg-secondary"><?php echo ($value['status'] && $has_product_bid) ? 'Approved' : '' ?></span>
+                    <span class="badge bg-secondary"><?php echo ($has_product_bid && $value) ? 'Approved' : '' ?></span>
                   </td>
 
                   <?php if (!$has_product_bid): ?>

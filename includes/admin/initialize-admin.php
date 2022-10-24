@@ -110,11 +110,12 @@ function sg_bidder_list() {
         'user_name'   => $user->data->display_name,
         'amount'      => number_format((float)$value->bid, 2, '.', ''),
         'status'      => $value->status,
+        'bidder_status' => get_bidder_status($product_id, $value->status),
         'date'        => $value->date,
       );
     }
-
   }
+
   $result = [
     'bidders'    => $bidders,
     'product_id' => filter_input(INPUT_GET, 'product_id')

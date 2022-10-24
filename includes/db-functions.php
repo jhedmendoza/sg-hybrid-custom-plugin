@@ -138,9 +138,24 @@ function get_product_status($product_id) {
 
 function get_bidder_status($product_id, $status) {
 
-	if ($status)
-		return 'Approved';
-	else
-		return 'Pending';
+	$terms =  get_the_terms($product_id, 'yith_wcact_auction_status');
 
+	$auction_status = $terms[0]->slug;
+
+	if ( $status == 1 && !empty($auction_status) ) {
+		switch ($auction_status) {
+			case 'started':
+				return '15 mins counting down';
+			break;
+			case 'finished':
+				return 'Approved';
+			break;
+		}
+	}
+	else if ($status == 0 && empty($auction_status)) {
+			return 'Pending';
+	}
+	else {
+		return 'Rejected';
+	}
 }

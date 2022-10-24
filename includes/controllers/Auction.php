@@ -14,6 +14,7 @@ class Auction extends Email {
       add_action( 'woocommerce_single_product_summary',[$this, 'bid_button_on_product_page'], 32 );
 
       add_filter('yith_wcact_add_bid', [$this, 'extend_auction_time']);
+      add_filter('yith_wcact_after_auction_end', [$this, 'set_auction_status_to_finished']);
 
       add_action('template_redirect', [$this,  'set_auction']);
     }
@@ -21,6 +22,7 @@ class Auction extends Email {
     public function set_auction() {
         if (isset($_GET['dev'])) {
 
+          wp_set_object_terms(20579, 'finished', 'yith_wcact_auction_status', false );
           // wp_set_post_terms(18488, 'finished', 'yith_wcact_auction_status', false );
 
           $terms = get_the_terms(18488, 'yith_wcact_auction_status');
@@ -221,6 +223,11 @@ class Auction extends Email {
       update_post_meta($product_id, '_price', $bid);
       update_post_meta($product_id, '_yith_auction_for', strtotime($date) );
       update_post_meta($product_id, '_yith_auction_to', strtotime('+15 minutes', strtotime($date)));
+    }
+
+    public function set_auction_status_to_finished($product) {
+      $product_id = $product->get_id();
+      wp_set_object_terms($product_id, 'finished', 'yith_wcact_auction_status', false );
     }
 
     function bid_button_on_product_page() {
