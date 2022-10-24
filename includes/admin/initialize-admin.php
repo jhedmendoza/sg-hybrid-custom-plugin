@@ -90,15 +90,18 @@ function sg_product_auction_list() {
 }
 
 function sg_bidder_list() {
-  $requests = new AuctionRequests();
-  $data = $requests->get_all_user_auction_requests();
+  $product_id = filter_input(INPUT_GET, 'product_id');
+  $terms =  get_the_terms($product_id, 'yith_wcact_auction_status');
+  $auction_status = $terms[0]->slug;
 
-  if ( isset($data) && !empty($data) ) {
+  if ($auction_status == 'finished') {
+    $instance  = YITH_Auctions()->bids;
+    $bids      = $instance->get_bids_auction($product_id);
+    $max_bidder= $instance->get_max_bid( $product_id );
 
-    foreach($data as $value) {
-
-      $product_id = $value->product_id;
-      $user_id    = $value->user_id;
+    foreach ($bids as $bid) {
+      $product_id = $bid->auction_id;
+      $user_id    = $bid->user_id;
 
       $product = wc_get_product($product_id);
       $user = get_user_by('id', $user_id);
@@ -108,17 +111,44 @@ function sg_bidder_list() {
         'product_name'=> $product->get_title(),
         'user_id'     => $user_id,
         'user_name'   => $user->data->display_name,
-        'amount'      => number_format((float)$value->bid, 2, '.', ''),
-        'status'      => $value->status,
-        'bidder_status' => get_bidder_status($product_id, $value->status),
-        'date'        => $value->date,
+        'amount'      => $bid->bid,
+        'date'        => $bid->date,
+        'status'      => ($max_bidder->user_id == $user_id) ? 'Won' : ''
       );
+    }
+  }
+  else {
+
+    $requests = new AuctionRequests();
+    $data = $requests->get_all_user_auction_requests();
+
+    if ( isset($data) && !empty($data) ) {
+
+      foreach($data as $value) {
+
+        $product_id = $value->product_id;
+        $user_id    = $value->user_id;
+
+        $product = wc_get_product($product_id);
+        $user = get_user_by('id', $user_id);
+
+        $bidders[] = array(
+          'product_id'  => $product_id,
+          'product_name'=> $product->get_title(),
+          'user_id'     => $user_id,
+          'user_name'   => $user->data->display_name,
+          'amount'      => number_format((float)$value->bid, 2, '.', ''),
+          'status'      => $value->status,
+          'bidder_status' => get_bidder_status($product_id, $value->status),
+          'date'        => $value->date,
+        );
+      }
     }
   }
 
   $result = [
     'bidders'    => $bidders,
-    'product_id' => filter_input(INPUT_GET, 'product_id')
+    'product_id' => $product_id
   ];
     hybrid_include('includes/admin/template/auction/bidder-list.php', $result);
 }

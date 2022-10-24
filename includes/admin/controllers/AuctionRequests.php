@@ -16,7 +16,6 @@ class AuctionRequests {
   }
 
 
-
 }
 
 $auctionRequest = new AuctionRequests();
