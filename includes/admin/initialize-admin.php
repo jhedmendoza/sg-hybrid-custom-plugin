@@ -76,7 +76,6 @@ function sg_product_auction_list() {
         'product_status' => get_product_status($value->product_id)
       );
     }
-
   }
 
   $pagination = render_pagination($data);
@@ -140,17 +139,17 @@ function sg_bidder_list() {
       }
     }
 
-
   $result = [
     'bidders'         => $bidders,
     'initial_bidders' => $initial_bidders,
     'product_id'      => $product_id
   ];
-    hybrid_include('includes/admin/template/auction/bidder-list.php', $result);
+
+  hybrid_include('includes/admin/template/auction/bidder-list.php', $result);
 }
 
-function render_pagination($data)
-{
+
+function render_pagination($data) {
   $pagination = paginate_links([
     'base'      => add_query_arg('cpage', '%#%'),
     'format'    => '',

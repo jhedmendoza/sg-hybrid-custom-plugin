@@ -22,14 +22,13 @@ class Auction extends Email {
     public function set_auction() {
         if (isset($_GET['dev'])) {
 
-          wp_set_object_terms(20579, 'finished', 'yith_wcact_auction_status', false );
+          // wp_set_object_terms(20579, 'finished', 'yith_wcact_auction_status', false );
           // wp_set_post_terms(18488, 'finished', 'yith_wcact_auction_status', false );
 
-          $terms = get_the_terms(18488, 'yith_wcact_auction_status');
-          printr($terms);
+          // $terms = get_the_terms(18488, 'yith_wcact_auction_status');
+          // printr($terms);
 
-
-            // do_action( 'yith_wcact_email_new_bid', 11, 18630, []);
+          // do_action( 'yith_wcact_email_new_bid', 11, 18630, []);
 
           // $saved_methods = wc_get_customer_saved_methods_list( get_current_user_id() );
           // $has_methods   = (bool) $saved_methods;
@@ -160,8 +159,6 @@ class Auction extends Email {
         add_post_meta($product_id, 'current_bid', $start_price);
         update_post_meta($product_id, '_price', $start_price); //we should update the base price of product to user's bid
 
-        //we need to remove first the default product type and set it to `auction`
-        // wp_remove_object_terms( $product_id, 'simple', 'product_type' );
         wp_set_object_terms($product_id, 'auction', 'product_type', false );
         wp_set_object_terms($product_id, 'started', 'yith_wcact_auction_status', false );
 
@@ -283,7 +280,7 @@ class Auction extends Email {
         }
       }
 
-      //send email to
+      //send email to lost bidders
       foreach($rejected_users as $rejected) {
         $this->approved_bid_template($rejected->user_id, $product_id, $bid);
       }

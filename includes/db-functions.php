@@ -95,10 +95,10 @@ function get_user_auction($table_name, $user_id, $product_id) {
 	return $result;
 }
 
-function get_product_bidders($table_name, $product_id, $status) {
+function get_product_bidders($table_name, $product_id) {
 	global $wpdb;
 	$table = $wpdb->prefix.$table_name;
-	$query = "SELECT * FROM $table WHERE product_id = $product_id AND status = $status";
+	$query = "SELECT * FROM $table WHERE product_id = $product_id";
 	$result = $wpdb->get_results($query);
 	return $result;
 }
@@ -147,9 +147,6 @@ function get_bidder_status($product_id, $status) {
 			case 'started':
 				return '15 mins counting down';
 			break;
-			// case 'finished':
-			// 	return 'Won';
-			// break;
 		}
 	}
 	else if ($status == 0 && empty($auction_status)) {
@@ -158,4 +155,13 @@ function get_bidder_status($product_id, $status) {
 	else {
 		return '';
 	}
+
+}
+
+function get_all_bidders() {
+	global $wpdb;
+	$table = $wpdb->prefix.'yith_wcact_auction';
+	$query = "SELECT * FROM $table GROUP BY auction_id";
+	$result = $wpdb->get_results($query);
+	return $result;
 }
