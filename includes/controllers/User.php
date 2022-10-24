@@ -37,6 +37,9 @@ class User {
         else if ( isset($signon->errors['invalid_password']) ) {
           $errors = $signon->errors['invalid_password'][0];
         }
+        else if ( isset($signon->errors['incorrect_password']) ) {
+          $errors = $signon->errors['incorrect_password'][0];
+        }
 
         echo wp_json_encode([
           'status' => false,

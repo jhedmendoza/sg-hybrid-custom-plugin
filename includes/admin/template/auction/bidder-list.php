@@ -81,7 +81,7 @@ if (isset($_GET['test-admin'])) {
                 <th scope="col">Date Created</th>
                 <th scope="col">Status</th>
                 <?php if (!$has_product_bid): ?>
-                  <th scope="col">Status</th>
+                  <th scope="col">Action</th>
                 <?php endif; ?>
               </tr>
             </thead>
