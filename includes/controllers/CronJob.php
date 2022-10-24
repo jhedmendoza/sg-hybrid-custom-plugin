@@ -31,17 +31,13 @@ class CronJob {
 
             //check if 24 hours has passed
             if ($timediff > 86400) {
+              $auction->reset_product_bid_template($max_bidder->auction_id);
               $auction->remove_auction_to_product($max_bidder->auction_id);
               $instance->remove_customer_bids( $max_bidder->user_id, $max_bidder->auction_id );
             }
-
           }
-
         }
-        exit;
-
       }
-
     }
 }
 $cron = new CronJob();

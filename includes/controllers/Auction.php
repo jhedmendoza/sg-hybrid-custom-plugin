@@ -342,6 +342,26 @@ class Auction extends Email {
       $message.= "<p>Current bid: £$bid</p>";
       mail($user_email, $subject, $message, $headers);
     }
+
+    public function reset_product_bid_template($product_id) {
+
+      $product = wc_get_product($product_id);
+
+      $manager_id = get_post_custom_values('shop_manager', $product_id)[0];
+      $shop_manager = get_user_by('id', $manager_id);
+      $shop_manager_email = $shop_manager->user_email;
+      $product_name = $product->get_title();
+
+      $subject = "[Scotch Galore Whiskies - The Alternative to Auctions] - Bid reset to a product";
+      $headers = '';
+      $headers .= "MIME-Version: 1.0\r\n";
+      $headers .= "Content-Type: text/html;charset=utf-8\r\n";
+      $headers .= "From: postmaster@mg.scotchgalore.com\r\n";
+
+      $message.= "<p>Hi $shop_manager->user_login,</p>";
+      $message.= "<p>The bid for product <b>$product_name</b> has been reset due to the bidder didn\'t able to pay.</p>";
+      mail($shop_manager_email, $subject, $message, $headers);
+    }
 }
 
 $auction = new Auction();
