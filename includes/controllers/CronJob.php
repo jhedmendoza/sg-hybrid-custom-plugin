@@ -4,15 +4,11 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class CronJob {
 
     public function __construct() {
-       add_action('template_redirect', [$this, 'reset_bidders_to_auctioned_products']);
+      add_action('reset_auction_manager_product_bidders', [$this, 'reset_bidders_to_auctioned_products']);
     }
 
     //check if users did not pay for the product after 24 hours
     public function reset_bidders_to_auctioned_products() {
-
-      if ( isset($_GET['action']) && $_GET['action'] == 'update_bidders' &&
-          isset($_GET['sg_cron']) && $_GET['sg_cron'] == 1 ) {
-
         $auction    = new Auction();
         $instance   = YITH_Auctions()->bids;
         $bidders    = get_all_bidders();
@@ -37,7 +33,6 @@ class CronJob {
             }
           }
         }
-      }
     }
 }
 $cron = new CronJob();
