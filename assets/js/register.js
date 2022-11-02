@@ -31,13 +31,14 @@
       Swal.fire({
         title: 'Bid on this product',
         showCloseButton: true,
+        confirmButtonText: 'Submit',
+        confirmButtonColor: '#53CFCB',
+        focusConfirm: false,
         html:
         `
         <label for="bid_amount" style="margin-top: 40px;padding-right:15px;font-size:25px">£</label>
         <input type="number" id="bid-amount" class="swal2-input" min="1" placeholder="Amount" name="bid_amount">
         `,
-        confirmButtonText: 'Submit',
-        focusConfirm: false,
         preConfirm: () => {
           const amount = Swal.getPopup().querySelector('#bid-amount').value
 
@@ -92,6 +93,9 @@
       Swal.fire({
         title: 'Registration',
         showCloseButton: true,
+        confirmButtonText: 'Register',
+        confirmButtonColor: '#53CFCB',
+        focusConfirm: false,
         html:
         `
         <input type="text" id="create-email" class="swal2-input" placeholder="Email" required>
@@ -99,8 +103,6 @@
         <input type="password" id="create-password" class="swal2-input" placeholder="Password">
         <input type="password" id="repeat-password" class="swal2-input" placeholder="Repeat Password">
         `,
-        confirmButtonText: 'Register',
-        focusConfirm: false,
         preConfirm: () => {
           const email = Swal.getPopup().querySelector('#create-email').value
           const username = Swal.getPopup().querySelector('#create-username').value

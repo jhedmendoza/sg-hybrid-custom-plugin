@@ -8,14 +8,15 @@
       Swal.fire({
         title: 'Login',
         showCloseButton: true,
+        confirmButtonText: 'Sign in',
+        confirmButtonColor: '#53CFCB',
+        focusConfirm: false,
         html:
         `
         <input type="text" id="username" class="swal2-input" placeholder="Username">
         <input type="password" id="user-password" class="swal2-input" placeholder="Password">
         <a class="user-registration" style="float:left" href="#">Register</a>
         `,
-        confirmButtonText: 'Sign in',
-        focusConfirm: false,
         preConfirm: () => {
           const userame = Swal.getPopup().querySelector('#username').value
           const password = Swal.getPopup().querySelector('#user-password').value
