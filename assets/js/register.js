@@ -30,6 +30,7 @@
 
       Swal.fire({
         title: 'Bid on this product',
+        showCloseButton: true,
         html:
         `
         <label for="bid_amount" style="margin-top: 40px;padding-right:15px;font-size:25px">£</label>
@@ -90,6 +91,7 @@
     function registerUser() {
       Swal.fire({
         title: 'Registration',
+        showCloseButton: true,
         html:
         `
         <input type="text" id="create-email" class="swal2-input" placeholder="Email" required>

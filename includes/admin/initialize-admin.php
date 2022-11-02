@@ -94,6 +94,9 @@ function sg_bidder_list() {
   $bids      = $instance->get_bids_auction($product_id);
   $max_bidder= $instance->get_max_bid( $product_id );
 
+  $terms =  get_the_terms($product_id, 'yith_wcact_auction_status');
+  $auction_status = $terms[0]->slug;
+
     foreach ($bids as $bid) {
       $product_id = $bid->auction_id;
       $user_id    = $bid->user_id;
@@ -108,7 +111,7 @@ function sg_bidder_list() {
         'user_name'   => $user->data->display_name,
         'amount'      => $bid->bid,
         'date'        => $bid->date,
-        'status'      => ($max_bidder->user_id == $user_id) ? 'Won' : ''
+        'status'      => ($max_bidder->user_id == $user_id && $auction_status == 'finished') ? 'Won' : ''
       );
     }
 

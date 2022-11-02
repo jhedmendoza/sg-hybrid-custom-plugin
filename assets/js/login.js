@@ -7,6 +7,7 @@
 
       Swal.fire({
         title: 'Login',
+        showCloseButton: true,
         html:
         `
         <input type="text" id="username" class="swal2-input" placeholder="Username">

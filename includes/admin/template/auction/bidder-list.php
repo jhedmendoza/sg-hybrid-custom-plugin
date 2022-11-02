@@ -5,6 +5,7 @@ $terms =  get_the_terms($attributes['product_id'], 'yith_wcact_auction_status');
 $auction_status = $terms[0]->slug;
 
 if (isset($_GET['test-admin'])) {
+  echo $has_product_bid;
   printr($terms);
 }
 
@@ -42,7 +43,6 @@ if (isset($_GET['test-admin'])) {
             <tbody>
               <?php if ( isset($attributes['bidders']) && !empty($attributes['bidders']) ): ?>
                 <?php foreach($attributes['bidders'] as $key => $value): ?>
-                  <?php if ($value['status']): ?>
                 <tr>
                   <td class="bidder-name"><?php echo $value['user_name']; ?></td>
                   <td><?php echo $value['user_id']; ?></td>
@@ -52,7 +52,6 @@ if (isset($_GET['test-admin'])) {
                     <span class="badge bg-secondary"><?php echo $value['bidder_status'] ?></span>
                   </td>
                 </tr>
-                  <?php endif; ?>
                 <?php endforeach; ?>
               <?php else: ?>
                 <tr><td class="text-center" colspan="6">No data available</td></tr>
