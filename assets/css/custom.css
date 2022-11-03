@@ -1,6 +1,8 @@
 .woocommerce-MyAccount-navigation ul {list-style:none}
 .swal2-validation-message {margin-top:30px !important}
 .is-active {font-weight:600}
-.bid-btn {margin-left:10px !important}
+.bid-btn {margin-left:0}
 .preloader {margin-bottom:30px}
 .yith-wcact-table-bids {display: none !important}
+.err-msg {font-size: 15px !important; line-height: 20px !important;margin-bottom:2em;display:none}
+.disabled {background-color: gray !important}

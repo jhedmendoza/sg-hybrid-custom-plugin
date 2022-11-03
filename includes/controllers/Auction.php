@@ -131,7 +131,7 @@ class Auction extends Email {
 
         echo wp_json_encode([
           'status' => true,
-          'msg'    => "You successfuly bid to {$product_name}. Please wait for the administrator to approve your bid. Thank you.",
+          'msg'    => "You successfuly bid to {$product_name}. Please wait for the seller to approve your bid. Thank you.",
         ]);
       }
       else {
@@ -243,10 +243,10 @@ class Auction extends Email {
           $disableBtn = ($has_methods && empty($check_user_bid) ) ? '' : 'disabled';
 
           if (!$has_methods) {
-            $btnMessage = 'You need to add a valid credit card in order to bid. Please go to payment method in My Account';
+            $btnMessage = 'You currently have no payment method associated with your account. Please <a href="'.site_url('my-account/payment-methods').'">Add Payment Method</a> to bid.';
           }
           else if ( !empty($check_user_bid) ) {
-            $btnMessage = 'You already bid for this product. Wait for the auction manager to approve your bid.';
+            $btnMessage = 'You already bid for this product. Wait for the seller to approve your bid.';
           }
         }
         else {
@@ -255,7 +255,8 @@ class Auction extends Email {
         }
 
         if ($product->get_type() != 'auction') {
-            echo '<button title="'.$btnMessage.'" '.$disableBtn.' type="button" data-product-id="'.$product_id.'"  style="display:none" class="bid-btn single_add_to_cart_button button alt">Bid</button>';
+            echo '<button '.$disableBtn.' type="button" data-product-id="'.$product_id.'"  style="display:none;" class="bid-btn single_add_to_cart_button button alt '.$disableBtn.'">Bid</button>';
+            echo "<p class='err-msg'>$btnMessage</p>";
         }
     }
 
@@ -293,14 +294,14 @@ class Auction extends Email {
       $product = wc_get_product($product_id);
       $product_name = $product->get_title();
 
-      $subject = "[Scotch Galore Whiskies - The Alternative to Auctions] - Successful initial bid";
+      $subject = "Scotch Galore Whiskies - The Alternative to Auctions - Successful initial bid";
       $headers  = '';
       $headers .= "MIME-Version: 1.0\r\n";
       $headers .= "Content-Type: text/html; charset=iso-8859-1\r\n";
       $headers .= "From: postmaster@mg.scotchgalore.com\r\n";
 
       $message.= "<p>Hi $user->user_login,</p>";
-      $message.= "<p>You successfully created an initial bid of £$bid to the product <b>$product_name</b>. Please wait for the auction manager to approve your bid.</p>";
+      $message.= "<p>You successfully created an initial bid of £$bid to the product <b>$product_name</b>. Please wait for the seller to approve your bid.</p>";
 
       mail($user_email, $subject, $message, $headers);
     }
@@ -313,7 +314,7 @@ class Auction extends Email {
       $shop_manager_email = $shop_manager->user_email;
       $product_name = $product->get_title();
 
-      $subject = "[Scotch Galore Whiskies - The Alternative to Auctions] - New initial bid to a product";
+      $subject = "Scotch Galore Whiskies - The Alternative to Auctions - New initial bid to a product";
       $headers = '';
       $headers .= "MIME-Version: 1.0\r\n";
       $headers .= "Content-Type: text/html;charset=utf-8\r\n";
@@ -331,7 +332,7 @@ class Auction extends Email {
       $product = wc_get_product($product_id);
       $product_name = $product->get_title();
 
-      $subject = "[Scotch Galore Whiskies - The Alternative to Auctions] - New bid to a product";
+      $subject = "Scotch Galore Whiskies - The Alternative to Auctions - New bid to a product";
       $headers = '';
       $headers .= "MIME-Version: 1.0\r\n";
       $headers .= "Content-Type: text/html;charset=utf-8\r\n";
@@ -352,7 +353,7 @@ class Auction extends Email {
       $shop_manager_email = $shop_manager->user_email;
       $product_name = $product->get_title();
 
-      $subject = "[Scotch Galore Whiskies - The Alternative to Auctions] - Bid reset to a product";
+      $subject = "Scotch Galore Whiskies - The Alternative to Auctions - Bid reset to a product";
       $headers = '';
       $headers .= "MIME-Version: 1.0\r\n";
       $headers .= "Content-Type: text/html;charset=utf-8\r\n";
