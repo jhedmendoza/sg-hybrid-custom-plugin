@@ -3,6 +3,6 @@
 .is-active {font-weight:600}
 .bid-btn {margin-left:0}
 .preloader {margin-bottom:30px}
-.yith-wcact-table-bids {display: none !important}
+.yith-wcact-table-bids, .yith-wcact-timeleft-days, .yith-wcact-timeleft-hours {display: none !important}
 .err-msg {font-size: 15px !important; line-height: 20px !important;margin-bottom:2em;display:none}
 .disabled {background-color: gray !important}
