@@ -6,3 +6,7 @@
 .yith-wcact-table-bids, .yith-wcact-timeleft-days, .yith-wcact-timeleft-hours {display: none !important}
 .err-msg {font-size: 15px !important; line-height: 20px !important;margin-bottom:2em;display:none}
 .disabled {background-color: gray !important}
+
+.yith-wcact-watchlist-button {background-color:#171717;color:#ffffff;padding:10px;margin-bottom:20px;text-align: center; padding-left: 20px;padding-right: 20px;}
+.yith-wcact-watchlist-button .button.yith-wcact-watchlist {background: linear-gradient(45deg, #e1c76e, #b2843c) !important;color: #443111 !important;font-size: 18px;padding: 15px 12px !important;height: auto;letter-spacing: 2px;margin: 0 auto;margin-top: 0.5rem;max-width: 400px;border-radius: 4px!important; margin-left: 5px !important;}
+.yith-wcact-watchlist-button #yith-wcact-watchlist-email {text-align: center;margin: 0 auto;font-size: 18px;background: #fff;border-color: #fff;width: 300px;  padding: 10px 5px;  border-radius: 3px;border: none !important;}
