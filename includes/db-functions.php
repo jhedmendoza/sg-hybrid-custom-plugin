@@ -95,6 +95,14 @@ function get_user_auction($table_name, $user_id, $product_id) {
 	return $result;
 }
 
+function get_yith_bidders($table_name, $user_id, $product_id) {
+	global $wpdb;
+	$table = $wpdb->prefix.$table_name;
+	$query = "SELECT * FROM $table WHERE user_id = $user_id AND auction_id = $product_id";
+	$result = $wpdb->get_row($query);
+	return $result;
+}
+
 function get_product_bidders($table_name, $product_id) {
 	global $wpdb;
 	$table = $wpdb->prefix.$table_name;

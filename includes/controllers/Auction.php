@@ -12,6 +12,7 @@ class Auction extends Email {
       add_action('wp_ajax_nopriv_approve_user_auction', [$this, 'approve_user_auction']);
 
       add_action( 'woocommerce_single_product_summary',[$this, 'bid_button_on_product_page'], 32 );
+      add_action( 'woocommerce_before_single_product', [$this, 'override_yith_content'], 10 );
 
       add_filter('yith_wcact_add_bid', [$this, 'extend_auction_time']);
       add_filter('yith_wcact_after_auction_end', [$this, 'set_auction_status_to_finished']);
@@ -227,7 +228,7 @@ class Auction extends Email {
       wp_set_object_terms($product_id, 'finished', 'yith_wcact_auction_status', false );
     }
 
-    function bid_button_on_product_page() {
+    public function bid_button_on_product_page() {
         global $product;
         $user_id    = get_current_user_id();
         $product_id = $product->get_id();
@@ -260,7 +261,15 @@ class Auction extends Email {
         }
     }
 
-
+    public function override_yith_content() {
+      $product =  wc_get_product();
+      $product_id = $product->get_id();
+      $user_id = get_current_user_id();
+      $user_bidder = get_yith_bidders('yith_wcact_auction', $user_id, $product_id);
+      if ( !empty($user_bidder) ) {
+        echo '<style>.ywcact-add-to-watchlist-container, .yith-wcact-watchlist-button {display:none}</style>';
+      }
+    }
 
 /********************** Email methods **********************************************************/
 //TODO: separate this methods to a new class

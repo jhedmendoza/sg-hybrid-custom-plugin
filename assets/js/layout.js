@@ -20,6 +20,8 @@
 
     $('.summary p.price').prependTo('.cart');
 
+    $('.ywcact-auction-end').text('Auction currently ends on: ');
+
   }
 
   $(document).ready(init);

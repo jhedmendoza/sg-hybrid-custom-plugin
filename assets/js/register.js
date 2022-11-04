@@ -2,9 +2,6 @@
 
   function init() {
 
-    // if (isUserLogin && isProductPage)
-    //   checkUserBid();
-
     if ( $('#winner_maximun_bid').length ) {
       $('#yith-wcact-form-bid').hide();
     }
@@ -61,16 +58,19 @@
                 success: function (response) {
                   var resp = JSON.parse(response);
                   if (resp.status) {
+
                     Swal.fire({
                       icon: 'success',
                       text: resp.msg,
                       showConfirmButton: true,
                     })
+
                     $('.bid-btn')
-                    .attr({
-                        'disabled':true,
-                        'title':'You already bid for this product. Wait for the admin to approve your bid.',
-                    });
+                      .addClass('disabled')
+                      .attr({
+                          'disabled':true,
+                          'title':'You already bid for this product. Wait for the seller to approve your bid.',
+                      });
                   }
                   else {
                     Swal.showValidationMessage(resp.msg);
@@ -138,29 +138,6 @@
 
       $('.swal2-input').on('keyup',function () {
         $('.swal2-confirm').removeAttr('disabled');
-      });
-    }
-
-
-    function checkUserBid() {
-      var productID = $('button[name="add-to-cart"]').attr('value');
-      $.ajax({
-          url : sg_ajax_url,
-          type: 'POST',
-          data: {
-            'action':'check_user_first_bid_attempt_status',
-            'product_id': productID
-          },
-          beforeSend: function () {},
-          success: function (response) {
-            var resp = JSON.parse(response);
-            if (resp.status) {
-              $('.bid-btn').attr({
-                  'disabled' : true,
-                  'title':'You already bid for this product. Wait for the admin to approve your bid.',
-              });
-            }
-          }
       });
     }
 
