@@ -153,7 +153,7 @@ function get_bidder_status($product_id, $status) {
 	if ( $status == 1 && !empty($auction_status) ) {
 		switch ($auction_status) {
 			case 'started':
-				return '15 mins counting down';
+				return 'count_down_timer';
 			break;
 		}
 	}

@@ -3,6 +3,8 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Auction extends Email {
 
+    const AUCTION_TIME = '+15 minutes';
+
     public function __construct() {
       add_action('wp_ajax_sg_user_bid', [$this, 'sg_user_bid']);
       add_action('wp_ajax_nopriv_sg_user_bid', [$this, 'sg_user_bid']);
@@ -155,7 +157,7 @@ class Auction extends Email {
 
         add_post_meta($product_id, '_yith_auction_start_price', $start_price);
         add_post_meta($product_id, '_yith_auction_for', strtotime($current_date) );
-        add_post_meta($product_id, '_yith_auction_to', strtotime('+15 minutes', strtotime($current_date)));
+        add_post_meta($product_id, '_yith_auction_to', strtotime(self::AUCTION_TIME, strtotime($current_date)));
 
         add_post_meta($product_id, 'current_bid', $start_price);
         update_post_meta($product_id, '_price', $start_price); //we should update the base price of product to user's bid
@@ -220,7 +222,7 @@ class Auction extends Email {
 
       update_post_meta($product_id, '_price', $bid);
       update_post_meta($product_id, '_yith_auction_for', strtotime($date) );
-      update_post_meta($product_id, '_yith_auction_to', strtotime('+15 minutes', strtotime($date)));
+      update_post_meta($product_id, '_yith_auction_to', strtotime(self::AUCTION_TIME, strtotime($date)));
     }
 
     public function set_auction_status_to_finished($product) {

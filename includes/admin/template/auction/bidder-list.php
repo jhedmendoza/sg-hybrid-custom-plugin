@@ -1,5 +1,6 @@
 <?php
-global $product;
+$wc_product = wc_get_product($attributes['product_id']);
+$product = apply_filters('yith_wcact_get_auction_product', $wc_product );
 $has_product_bid = get_post_meta($attributes['product_id'], 'yith_wcact_new_bid', true);
 $terms =  get_the_terms($attributes['product_id'], 'yith_wcact_auction_status');
 $auction_status = $terms[0]->slug;
@@ -30,7 +31,7 @@ if (isset($_GET['test-admin'])) {
         <h5 class="ps-0 pb-0">Running Bids</h5>
       </div>
       <div class="row">
-        <table class="table table-striped table-logo_manager">
+        <table class="table table-striped table_running-bids">
             <thead>
               <tr>
                 <th scope="col">Username</th>
@@ -49,7 +50,9 @@ if (isset($_GET['test-admin'])) {
                   <td>£<?php echo $value['amount'] ?></td>
                   <td><?php echo $value['date']; ?></td>
                   <td>
-                    <span class="badge bg-secondary"><?php echo $value['bidder_status'] ?></span>
+                    <?php if ($value['bidder_status'] == 'count_down_timer'): ?>
+                      <span class="countdown-timer" data-time-left="<?php echo $product->get_end_date() ?>" data-current-time="<?php echo strtotime('now') ?>"></span>
+                    <?php endif; ?>
                   </td>
                 </tr>
                 <?php endforeach; ?>
@@ -73,7 +76,7 @@ if (isset($_GET['test-admin'])) {
         <h5 class="ps-0 pb-0">Offer</h5>
       </div>
       <div class="row">
-        <table class="table table-striped table-logo_manager">
+        <table class="table table-striped">
             <thead>
               <tr>
                 <th scope="col">Username</th>
@@ -117,7 +120,7 @@ if (isset($_GET['test-admin'])) {
         <h5 class="ps-0 pb-0">Initial bid</h5>
       </div>
       <div class="row">
-        <table class="table table-striped table-logo_manager <?php echo $has_product_bid ? 'table-secondary' : '' ?>">
+        <table class="table table-striped <?php echo $has_product_bid ? 'table-secondary' : '' ?>">
             <thead>
               <tr>
                 <th scope="col">Username</th>

@@ -2,6 +2,17 @@
 
   function init() {
 
+    var auctionTimeLeft = $('.countdown-timer').attr('data-time-left');
+    var currentTime = $('.countdown-timer').attr('data-current-time');
+    var diffTime = auctionTimeLeft - currentTime;
+    var duration = moment.duration(diffTime*1000, 'milliseconds');
+    var interval = 1000;
+
+    setInterval(function(){
+      duration = moment.duration(duration - interval, 'milliseconds');
+        $('.table_running-bids tr').eq(1).find('.countdown-timer').text( duration.minutes() + ' minutes ' + duration.seconds() + ' seconds' );
+    }, interval);
+
     $('.btn-approve').on('click', function(e) {
       e.preventDefault();
 
@@ -49,6 +60,8 @@
       });
 
     });
+
+
 
 
   }

@@ -45,6 +45,10 @@ function enqueue_admin_css_js() {
   wp_enqueue_script('bootstrap-toggle','https://cdn.jsdelivr.net/npm/bootstrap5-toggle@4.3.2/js/bootstrap5-toggle.min.js', [], '4.3.2', true );
   wp_enqueue_script('swal-alert-admin','https://cdn.jsdelivr.net/npm/sweetalert2@10.15.5/dist/sweetalert2.all.min.js', ['jquery'], '10.15.5', true);
 
+  wp_enqueue_script('moment-min', HYBRID_DIR_URL.'includes/admin/assets/lib/moment.min.js', [], null, true);
+  wp_enqueue_script('countdown-min', HYBRID_DIR_URL.'includes/admin/assets/lib/countdown.min.js', [], '2.6.1', true);
+  wp_enqueue_script('moment-countdown', HYBRID_DIR_URL.'includes/admin/assets/lib/moment-countdown.min.js', [], null, true);
+
   wp_enqueue_script('sg-admin-custom', HYBRID_DIR_URL . 'includes/admin/assets/js/sg-admin-custom.js', ['jquery'], $admin_version_script, true );
 }
 
@@ -111,7 +115,8 @@ function sg_bidder_list() {
         'user_name'   => $user->data->display_name,
         'amount'      => $bid->bid,
         'date'        => $bid->date,
-        'status'      => ($max_bidder->user_id == $user_id && $auction_status == 'finished') ? 'Won' : ''
+        'status'      => ($max_bidder->user_id == $user_id && $auction_status == 'finished') ? 'Won' : '',
+        'bidder_status' => get_bidder_status($product_id, true),
       );
     }
 
