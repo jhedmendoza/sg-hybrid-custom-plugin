@@ -5,7 +5,7 @@ $has_product_bid = get_post_meta($attributes['product_id'], 'yith_wcact_new_bid'
 $terms =  get_the_terms($attributes['product_id'], 'yith_wcact_auction_status');
 $auction_status = $terms[0]->slug;
 
-if (isset($_GET['test-admin'])) {
+if (isset($_GET['debug'])) {
   echo $has_product_bid;
   printr($terms);
 }
@@ -71,7 +71,7 @@ if (isset($_GET['test-admin'])) {
       </div>
     </div>
   <?php elseif ($has_product_bid && $auction_status == 'finished'): ?>
-    <div class="running-bids">
+    <div class="finished-bids">
       <div class="row">
         <h5 class="ps-0 pb-0">Offer</h5>
       </div>
@@ -95,7 +95,7 @@ if (isset($_GET['test-admin'])) {
                   <td>£<?php echo $value['amount'] ?></td>
                   <td><?php echo $value['date']; ?></td>
                   <td>
-                    <span class="badge bg-secondary"><?php echo $value['status'] ?></span>
+                    <span class="badge bg-secondary badge_bid-status" style="display:none"><?php echo $value['status'] ?></span>
                   </td>
                 </tr>
                 <?php endforeach; ?>
@@ -148,6 +148,7 @@ if (isset($_GET['test-admin'])) {
                   <?php if (!$has_product_bid): ?>
                   <td>
                     <button data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" class="btn btn-primary btn-approve btn-sm">Approve</button>
+                    <button data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" class="btn btn-danger btn-reject btn-sm">Reject</button>
                   </td>
                   <?php endif; ?>
 

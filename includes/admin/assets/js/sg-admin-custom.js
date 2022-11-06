@@ -13,6 +13,10 @@
         $('.table_running-bids tr').eq(1).find('.countdown-timer').text( duration.minutes() + ' minutes ' + duration.seconds() + ' seconds' );
     }, interval);
 
+
+    $('.finished-bids table tr').eq(1).find('.badge_bid-status').show();
+
+
     $('.btn-approve').on('click', function(e) {
       e.preventDefault();
 

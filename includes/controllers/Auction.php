@@ -3,7 +3,7 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Auction extends Email {
 
-    const AUCTION_TIME = '+15 minutes';
+    const AUCTION_TIME = '+3 minutes';
 
     public function __construct() {
       add_action('wp_ajax_sg_user_bid', [$this, 'sg_user_bid']);
@@ -23,7 +23,25 @@ class Auction extends Email {
     }
 
     public function set_auction() {
+
         if (isset($_GET['dev'])) {
+          $mailer = WC()->mailer();
+          $order = wc_get_product(23624);
+
+          //format the email
+          $recipient = 'jhed@hybridanchor.com';
+          $subject = "Hi! Here is a custom notification from us!";
+          ob_start();
+          $content =  hybrid_include('includes/admin/template/email/new-bid.php', $order);
+          $output = ob_get_contents();
+          ob_end_clean();
+          $headers = "Content-Type: text/html";
+
+          //send the email through wordpress
+           $send = $mailer->send($recipient, $subject, $output, $headers );
+           printr($send);
+           exit;
+
 
           // wp_set_object_terms(20579, 'finished', 'yith_wcact_auction_status', false );
           // wp_set_post_terms(18488, 'finished', 'yith_wcact_auction_status', false );
@@ -45,6 +63,8 @@ class Auction extends Email {
     }
 
     public function approve_user_auction() {
+      error_reporting(E_ALL);
+      ini_set("display_errors", 1);
       $product_id = sanitize_text_field($_POST['product_id']);
       $user_id    = sanitize_text_field($_POST['user_id']);
       $bid_price  = sanitize_text_field($_POST['bid_price']);
@@ -278,7 +298,7 @@ class Auction extends Email {
 
     public function send_initial_bid_notif($user_id, $product_id, $bid) {
       $this->initial_bid_user_template($user_id, $product_id, $bid);
-      $this->initial_bid_auction_manager_template($product_id, $bid);
+      $this->initial_bid_seller_template($product_id, $bid);
     }
 
     public function send_approved_bid_notif($user_id, $product_id, $bid) {
@@ -306,53 +326,49 @@ class Auction extends Email {
       $product_name = $product->get_title();
 
       $subject = "Scotch Galore Whiskies - The Alternative to Auctions - Successful initial bid";
-      $headers  = '';
-      $headers .= "MIME-Version: 1.0\r\n";
-      $headers .= "Content-Type: text/html; charset=iso-8859-1\r\n";
-      $headers .= "From: postmaster@mg.scotchgalore.com\r\n";
+      $mailer = WC()->mailer();
 
-      $message.= "<p>Hi $user->user_login,</p>";
-      $message.= "<p>You successfully created an initial bid of £$bid to the product <b>$product_name</b>. Please wait for the seller to approve your bid.</p>";
+      ob_start();
+      $content = hybrid_include('includes/admin/template/email/initial_bid_user.php', $product);
+      $output  = ob_get_contents();
+      ob_end_clean();
 
-      mail($user_email, $subject, $message, $headers);
+      $headers = "Content-Type: text/html";
+      $mailer->send($recipient, $subject, $content, $headers );
     }
 
-    public function initial_bid_auction_manager_template( $product_id, $bid) {
+    public function initial_bid_seller_template( $product_id, $bid) {
       $product = wc_get_product($product_id);
-
       $manager_id = get_post_custom_values('shop_manager', $product_id)[0];
       $shop_manager = get_user_by('id', $manager_id);
       $shop_manager_email = $shop_manager->user_email;
+      $shop_manager_login = $shop_manager->user_login;
       $product_name = $product->get_title();
 
-      $subject = "Scotch Galore Whiskies - The Alternative to Auctions - New initial bid to a product";
-      $headers = '';
-      $headers .= "MIME-Version: 1.0\r\n";
-      $headers .= "Content-Type: text/html;charset=utf-8\r\n";
-      $headers .= "From: postmaster@mg.scotchgalore.com\r\n";
-
-      $message.= "<p>Hi $shop_manager->user_login,</p>";
-      $message.= "<p>There is a new initial bid of £$bid to the product <b>$product_name</b></p>";
-      mail($shop_manager_email, $subject, $message, $headers);
+      $mailer = WC()->mailer();
+      $product->seller_login = $shop_manager_login;
+      ob_start();
+      $content = hybrid_include('includes/admin/template/email/new-bid.php', $product);
+      $output  = ob_get_contents();
+      ob_end_clean();
+      $mailer->send($recipient, $subject, $content, 'Content-Type: text/html');
     }
 
     public function approved_bid_template($user_id, $product_id, $bid) {
 
       $user = get_user_by('id', $user_id);
       $user_email = $user->user_email;
+      $user_login = $user->user_login;
+
       $product = wc_get_product($product_id);
-      $product_name = $product->get_title();
+      $product->user_login = $user_login;
+      $mailer = WC()->mailer();
 
-      $subject = "Scotch Galore Whiskies - The Alternative to Auctions - New bid to a product";
-      $headers = '';
-      $headers .= "MIME-Version: 1.0\r\n";
-      $headers .= "Content-Type: text/html;charset=utf-8\r\n";
-      $headers .= "From: postmaster@mg.scotchgalore.com\r\n";
-
-      $message.= "<p>Hi $user->user_login,</p>";
-      $message.= "<p>There is a new bid to the product <b>$product_name</b></p>";
-      $message.= "<p>Current bid: £$bid</p>";
-      mail($user_email, $subject, $message, $headers);
+      ob_start();
+      $content = hybrid_include('includes/admin/template/email/new-bid.php', $product);
+      $output  = ob_get_contents();
+      ob_end_clean();
+      $mailer->send($recipient, $subject, $content, 'Content-Type: text/html' );
     }
 
     public function reset_product_bid_template($product_id) {
@@ -371,9 +387,10 @@ class Auction extends Email {
       $headers .= "From: postmaster@mg.scotchgalore.com\r\n";
 
       $message.= "<p>Hi $shop_manager->user_login,</p>";
-      $message.= "<p>The bid for product <b>$product_name</b> has been reset due to the bidder didn\'t able to pay.</p>";
+      $message.= "<p>The bid for product <b>$product_name</b> has been reset due to the bidder wasn't able to pay.</p>";
       mail($shop_manager_email, $subject, $message, $headers);
     }
+
 }
 
 $auction = new Auction();

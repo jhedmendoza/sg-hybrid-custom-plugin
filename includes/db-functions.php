@@ -160,10 +160,7 @@ function get_bidder_status($product_id, $status) {
 	else if ($status == 0 && empty($auction_status)) {
 			return 'Pending';
 	}
-	else {
-		return '';
-	}
-
+	return;
 }
 
 function get_all_bidders() {
