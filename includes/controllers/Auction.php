@@ -3,7 +3,7 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Auction extends Email {
 
-    const AUCTION_TIME = '+3 minutes';
+    const AUCTION_TIME = '+1 minutes';
 
     public function __construct() {
       add_action('wp_ajax_sg_user_bid', [$this, 'sg_user_bid']);
@@ -19,22 +19,25 @@ class Auction extends Email {
       add_filter('yith_wcact_add_bid', [$this, 'extend_auction_time']);
       add_filter('yith_wcact_after_auction_end', [$this, 'set_auction_status_to_finished']);
 
-      add_action('template_redirect', [$this,  'set_auction']);
+      add_action('template_redirect', [$this, 'set_auction']);
     }
 
     public function set_auction() {
 
         if (isset($_GET['dev'])) {
-          $mailer = WC()->mailer();
-          $order = wc_get_product(23440);
 
-          ob_start();
-          $content =  hybrid_include('includes/admin/template/email/initial_bid_seller.php', $order);
-          $output = ob_get_contents();
-          ob_end_clean();
+          wp_set_object_terms($_GET['prod_id'], 'finished', 'yith_wcact_auction_status', false );
 
-           $mailer->send('jhed@hybridanchor.com', 'New bid to a product', $output, 'Content-Type: text/html');
-           exit;
+          // $mailer = WC()->mailer();
+          // $order = wc_get_product(23440);
+          //
+          // ob_start();
+          // $content =  hybrid_include('includes/admin/template/email/initial_bid_seller.php', $order);
+          // $output = ob_get_contents();
+          // ob_end_clean();
+          //
+          //  $mailer->send('jhed@hybridanchor.com', 'New bid to a product', $output, 'Content-Type: text/html');
+          //  exit;
 
           // wp_set_object_terms(20579, 'finished', 'yith_wcact_auction_status', false );
           // wp_set_post_terms(18488, 'finished', 'yith_wcact_auction_status', false );
@@ -56,8 +59,8 @@ class Auction extends Email {
     }
 
     public function approve_user_auction() {
-      error_reporting(E_ALL);
-      ini_set("display_errors", 1);
+      // error_reporting(E_ALL);
+      // ini_set("display_errors", 1);
       $product_id = sanitize_text_field($_POST['product_id']);
       $user_id    = sanitize_text_field($_POST['user_id']);
       $bid_price  = sanitize_text_field($_POST['bid_price']);
@@ -124,8 +127,8 @@ class Auction extends Email {
 
     public function sg_user_bid() {
 
-      error_reporting(E_ALL);
-      ini_set("display_errors", 1);
+      // error_reporting(E_ALL);
+      // ini_set("display_errors", 1);
 
       global $product;
 
@@ -211,7 +214,6 @@ class Auction extends Email {
     }
 
     public function update_user_status($product_id, $user_id, $status) {
-
       $update = update_data('sg_hybrid_user_bid', $status, $product_id, $user_id);
       return $update;
     }
@@ -242,6 +244,7 @@ class Auction extends Email {
 
     public function set_auction_status_to_finished($product) {
       $product_id = $product->get_id();
+      mail('jhed@hybridanchor.com', 'auction finished - '.$product_id, $product_id);
       wp_set_object_terms($product_id, 'finished', 'yith_wcact_auction_status', false );
     }
 

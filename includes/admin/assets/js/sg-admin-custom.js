@@ -8,14 +8,20 @@
     var duration = moment.duration(diffTime*1000, 'milliseconds');
     var interval = 1000;
 
-    setInterval(function(){
-      duration = moment.duration(duration - interval, 'milliseconds');
+    setInterval(function() {
+      if (diffTime <= 0) {
+        $('.table_running-bids tr').eq(1).find('.countdown-timer').html('<span class="badge bg-secondary badge_bid-status">Won</span>');
+      }
+      else {
+        duration = moment.duration(duration - interval, 'milliseconds');
         $('.table_running-bids tr').eq(1).find('.countdown-timer').text( duration.minutes() + ' minutes ' + duration.seconds() + ' seconds' );
+      }
+
+      diffTime--;
+
     }, interval);
 
-
     $('.finished-bids table tr').eq(1).find('.badge_bid-status').show();
-
 
     $('.btn-approve').on('click', function(e) {
       e.preventDefault();

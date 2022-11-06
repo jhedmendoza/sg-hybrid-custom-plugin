@@ -1,15 +1,15 @@
 <?php
 $wc_product = wc_get_product($attributes['product_id']);
+
 $product = apply_filters('yith_wcact_get_auction_product', $wc_product );
 $has_product_bid = get_post_meta($attributes['product_id'], 'yith_wcact_new_bid', true);
-$terms =  get_the_terms($attributes['product_id'], 'yith_wcact_auction_status');
+$terms = get_the_terms($attributes['product_id'], 'yith_wcact_auction_status');
 $auction_status = $terms[0]->slug;
 
-if (isset($_GET['debug'])) {
+if (isset($_GET['debug-test'])) {
   echo $has_product_bid;
   printr($terms);
 }
-
 
 ?>
 
@@ -22,10 +22,10 @@ if (isset($_GET['debug'])) {
     </div>
 
     <div class="row">
-       <h5 class="mb-4 bg-secondary p-1"><a class="text-white text-decoration-none" href="<?php echo get_permalink($attributes['product_id']) ?>" target="_blank"><?php echo $attributes['bidders'][0]['product_name'] ?></a></h5>
+       <h5 class="mb-4 bg-secondary p-1"><a class="text-white text-decoration-none" href="<?php echo get_permalink($attributes['product_id']) ?>" target="_blank"><?php echo $wc_product->get_title() ?></a></h5>
     </div>
 
-    <?php if ($has_product_bid && $auction_status == 'started'): ?>
+    <?php if ($auction_status == 'started'): ?>
     <div class="running-bids">
       <div class="row">
         <h5 class="ps-0 pb-0">Running Bids</h5>
@@ -70,7 +70,7 @@ if (isset($_GET['debug'])) {
           </div>
       </div>
     </div>
-  <?php elseif ($has_product_bid && $auction_status == 'finished'): ?>
+  <?php elseif ($auction_status == 'finished'): ?>
     <div class="finished-bids">
       <div class="row">
         <h5 class="ps-0 pb-0">Offer</h5>
@@ -120,7 +120,7 @@ if (isset($_GET['debug'])) {
         <h5 class="ps-0 pb-0">Initial bid</h5>
       </div>
       <div class="row">
-        <table class="table table-striped <?php echo $has_product_bid ? 'table-secondary' : '' ?>">
+        <table class="table table-striped <?php echo !empty($auction_status) ? 'table-secondary' : '' ?>">
             <thead>
               <tr>
                 <th scope="col">Username</th>
@@ -128,7 +128,7 @@ if (isset($_GET['debug'])) {
                 <th scope="col">Bid Price</th>
                 <th scope="col">Date Created</th>
                 <th scope="col">Status</th>
-                <?php if (!$has_product_bid): ?>
+                <?php if (empty($auction_status)): ?>
                   <th scope="col">Action</th>
                 <?php endif; ?>
               </tr>
@@ -142,10 +142,10 @@ if (isset($_GET['debug'])) {
                   <td>£<?php echo $value['amount'] ?></td>
                   <td><?php echo $value['date']; ?></td>
                   <td>
-                    <span class="badge bg-secondary"><?php echo ($has_product_bid && $value['status']) ? 'Approved' : '' ?></span>
+                    <span class="badge bg-secondary"><?php echo (!empty($auction_status) && $value['status']) ? 'Approved' : '' ?></span>
                   </td>
 
-                  <?php if (!$has_product_bid): ?>
+                  <?php if ( empty($auction_status) ): ?>
                   <td>
                     <button data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" class="btn btn-primary btn-approve btn-sm">Approve</button>
                     <button data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" class="btn btn-danger btn-reject btn-sm">Reject</button>
