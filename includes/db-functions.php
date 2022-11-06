@@ -28,7 +28,7 @@ function insert_data($table_name, $data) {
 		}
 }
 
-function delete_data($table_name, $where, $format) {
+function delete_data($table_name, $where) {
 	global $wpdb;
   return $wpdb->delete($wpdb->prefix.$table_name, $where);
 }
@@ -146,7 +146,7 @@ function get_product_status($product_id) {
 
 function get_bidder_status($product_id, $status) {
 
-	$terms =  get_the_terms($product_id, 'yith_wcact_auction_status');
+	$terms = get_the_terms($product_id, 'yith_wcact_auction_status');
 
 	$auction_status = $terms[0]->slug;
 

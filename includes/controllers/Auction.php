@@ -26,22 +26,15 @@ class Auction extends Email {
 
         if (isset($_GET['dev'])) {
           $mailer = WC()->mailer();
-          $order = wc_get_product(23624);
+          $order = wc_get_product(23440);
 
-          //format the email
-          $recipient = 'jhed@hybridanchor.com';
-          $subject = "Hi! Here is a custom notification from us!";
           ob_start();
-          $content =  hybrid_include('includes/admin/template/email/new-bid.php', $order);
+          $content =  hybrid_include('includes/admin/template/email/initial_bid_seller.php', $order);
           $output = ob_get_contents();
           ob_end_clean();
-          $headers = "Content-Type: text/html";
 
-          //send the email through wordpress
-           $send = $mailer->send($recipient, $subject, $output, $headers );
-           printr($send);
+           $mailer->send('jhed@hybridanchor.com', 'New bid to a product', $output, 'Content-Type: text/html');
            exit;
-
 
           // wp_set_object_terms(20579, 'finished', 'yith_wcact_auction_status', false );
           // wp_set_post_terms(18488, 'finished', 'yith_wcact_auction_status', false );
@@ -94,24 +87,24 @@ class Auction extends Email {
         }
         exit;
       }
-      // else {
-      //     $userStatus = $this->update_user_status($product_id, $user_id, 0);
-      //     $delete = $this->delete_user_and_product_auction_data($product_id, $user_id);
-      //
-      //     if ($userStatus && $delete) {
-      //       echo wp_json_encode([
-      //         'status' => true,
-      //         'msg'    => 'User successfully rejected',
-      //       ]);
-      //     }
-      //     else {
-      //       echo wp_json_encode([
-      //         'status' => false,
-      //         'msg'    => 'Something went wrong. Please try again later.',
-      //       ]);
-      //     }
-      //     exit;
-      //   }
+
+      else {
+          $userStatus = delete_data('sg_hybrid_user_bid', ['product_id' => $product_id, 'user_id' => $user_id]);
+
+          if ($userStatus) {
+            echo wp_json_encode([
+              'status' => true,
+              'msg'    => 'User successfully rejected',
+            ]);
+          }
+          else {
+            echo wp_json_encode([
+              'status' => false,
+              'msg'    => 'Something went wrong. Please try again later.',
+            ]);
+          }
+          exit;
+        }
     }
 
     public function check_user_first_bid_attempt_status() {
@@ -130,6 +123,9 @@ class Auction extends Email {
     }
 
     public function sg_user_bid() {
+
+      error_reporting(E_ALL);
+      ini_set("display_errors", 1);
 
       global $product;
 
@@ -225,13 +221,12 @@ class Auction extends Email {
         'auction_id' => $product_id,
         'user_id'    => $user_id
       ];
-      $format = ['%d', '%d'];
 
       //delete the auction meta data for a product
       $this->remove_auction_to_product($product_id);
 
       //delete the user auction data
-      delete_data('yith_wcact_auction', $data, $format);
+      delete_data('yith_wcact_auction', $data);
       return true;
     }
 
@@ -322,36 +317,33 @@ class Auction extends Email {
     public function initial_bid_user_template($user_id, $product_id, $bid) {
       $user = get_user_by('id', $user_id);
       $user_email = $user->user_email;
+      $user_login = $user->user_login;
       $product = wc_get_product($product_id);
-      $product_name = $product->get_title();
 
-      $subject = "Scotch Galore Whiskies - The Alternative to Auctions - Successful initial bid";
       $mailer = WC()->mailer();
-
+      $product->user_login = $user_login;
       ob_start();
       $content = hybrid_include('includes/admin/template/email/initial_bid_user.php', $product);
       $output  = ob_get_contents();
       ob_end_clean();
 
-      $headers = "Content-Type: text/html";
-      $mailer->send($recipient, $subject, $content, $headers );
+      $mailer->send($user_email, 'Successful initial bid', $output, 'Content-Type: text/html');
     }
 
     public function initial_bid_seller_template( $product_id, $bid) {
       $product = wc_get_product($product_id);
-      $manager_id = get_post_custom_values('shop_manager', $product_id)[0];
+      $manager_id = isset(get_post_custom_values('shop_manager', $product_id)[0]) ? get_post_custom_values('shop_manager', $product_id)[0] : 3;
       $shop_manager = get_user_by('id', $manager_id);
       $shop_manager_email = $shop_manager->user_email;
       $shop_manager_login = $shop_manager->user_login;
-      $product_name = $product->get_title();
 
       $mailer = WC()->mailer();
       $product->seller_login = $shop_manager_login;
       ob_start();
-      $content = hybrid_include('includes/admin/template/email/new-bid.php', $product);
+      $content = hybrid_include('includes/admin/template/email/initial_bid_seller.php', $product);
       $output  = ob_get_contents();
       ob_end_clean();
-      $mailer->send($recipient, $subject, $content, 'Content-Type: text/html');
+      $mailer->send($shop_manager_email, 'New bid to a product', $output, 'Content-Type: text/html');
     }
 
     public function approved_bid_template($user_id, $product_id, $bid) {
@@ -368,27 +360,24 @@ class Auction extends Email {
       $content = hybrid_include('includes/admin/template/email/new-bid.php', $product);
       $output  = ob_get_contents();
       ob_end_clean();
-      $mailer->send($recipient, $subject, $content, 'Content-Type: text/html' );
+      $mailer->send($user_email, 'New bid to a product', $output, 'Content-Type: text/html' );
     }
 
     public function reset_product_bid_template($product_id) {
 
       $product = wc_get_product($product_id);
-
-      $manager_id = get_post_custom_values('shop_manager', $product_id)[0];
+      $manager_id = isset(get_post_custom_values('shop_manager', $product_id)[0]) ? get_post_custom_values('shop_manager', $product_id)[0] : 3;
       $shop_manager = get_user_by('id', $manager_id);
       $shop_manager_email = $shop_manager->user_email;
-      $product_name = $product->get_title();
+      $shop_manager_login = $shop_manager->user_login;
 
-      $subject = "Scotch Galore Whiskies - The Alternative to Auctions - Bid reset to a product";
-      $headers = '';
-      $headers .= "MIME-Version: 1.0\r\n";
-      $headers .= "Content-Type: text/html;charset=utf-8\r\n";
-      $headers .= "From: postmaster@mg.scotchgalore.com\r\n";
-
-      $message.= "<p>Hi $shop_manager->user_login,</p>";
-      $message.= "<p>The bid for product <b>$product_name</b> has been reset due to the bidder wasn't able to pay.</p>";
-      mail($shop_manager_email, $subject, $message, $headers);
+      $mailer = WC()->mailer();
+      $product->seller_login = $shop_manager_login;
+      ob_start();
+      $content = hybrid_include('includes/admin/template/email/reset_product_notification.php', $product);
+      $output  = ob_get_contents();
+      ob_end_clean();
+      $mailer->send($shop_manager_email, 'Bid reset to a product', $output, 'Content-Type: text/html');
     }
 
 }

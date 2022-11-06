@@ -148,7 +148,7 @@ if (isset($_GET['debug'])) {
                   <?php if (!$has_product_bid): ?>
                   <td>
                     <button data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" class="btn btn-primary btn-approve btn-sm">Approve</button>
-                    <button data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" class="btn btn-danger btn-reject btn-sm">Reject</button>
+                    <button data-bid-price="<?php echo $value['amount'] ?>" data-user-id="<?php echo $value['user_id'] ?>" data-product-id="<?php echo $value['product_id'] ?>" class="btn btn-danger btn-reject btn-sm">Reject</button>
                   </td>
                   <?php endif; ?>
 

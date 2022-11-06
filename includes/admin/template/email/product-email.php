@@ -1,11 +1,4 @@
 <?php
-/**
- * Add image product and title in notification email
- *
- * @author  Carlos Rodríguez <carlos.rodriguez@yithemes.com>
- * @package YITH\Auctions\Templates\Emails\ProductEmails
- */
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }

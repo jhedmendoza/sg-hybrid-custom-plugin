@@ -4,7 +4,7 @@ do_action( 'woocommerce_email_header', 'Successful initial bid', $attributes );
 <p>
 	<?php
 	// translators: %s is the bidder username.
-	echo wp_kses_post( sprintf( __( 'Hi!  %s,', 'yith-auctions-for-woocommerce' ), $attributes->user_login ) );
+	echo wp_kses_post( sprintf( __( 'Hi  %s,', 'yith-auctions-for-woocommerce' ), $attributes->user_login ) );
 	?>
 </p>
 <p>
