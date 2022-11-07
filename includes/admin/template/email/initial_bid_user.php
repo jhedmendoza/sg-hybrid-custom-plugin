@@ -18,6 +18,7 @@ $args = array(
 	'product'      => $attributes,
 	'url'          => $attributes->get_permalink(),
 	'product_name' => $attributes->get_title(),
+	'bidder'			 => $attributes->bidder,
 );
 wc_get_template( 'product-email.php', $args, '', hybrid_get_path('/includes/admin/template/email/'));
 ?>

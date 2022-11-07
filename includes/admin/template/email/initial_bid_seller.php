@@ -26,13 +26,19 @@ $args = array(
 	'product'      => $attributes,
 	'url'          => $attributes->get_permalink(),
 	'product_name' => $attributes->get_title(),
+	'bidder'			 => $attributes->bidder,
 );
+
+$product_id = $attributes->bidder->product_id;
+$user_id    = $attributes->bidder->user_id;
+$bid_price  = $attributes->bidder->bid;
+
 wc_get_template( 'product-email.php', $args, '', hybrid_get_path('/includes/admin/template/email/'));
 ?>
 <table class="table-action">
 	<tr>
-		<td><a class="btn btn-success" href="#">Approve</a></td>
-		<td><a class="btn btn-danger" href="#">Reject</a></td>
+		<td><a class="btn btn-success" href="<?php echo site_url("?sg_auction=approve&product_id=$product_id&user_id=$user_id&bid_price=$bid_price") ?>">Approve</a></td>
+		<td><a class="btn btn-danger" href="<?php echo site_url("?sg_auction=reject&product_id=$product_id&user_id=$user_id") ?>">Reject</a></td>
 	</tr>
 </table>
 <div>

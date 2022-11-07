@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<td>
 				<a style="text-decoration: none;" target="_blank" href="<?php echo esc_url( $url ); ?>"><?php echo wp_kses_post( $product_name ); ?></a></br>
 				<p class="ywcat-image-price" style="display: block; margin-bottom: 0px;"><span style="font-weight: 800 !important;"> <?php echo esc_html__( 'Current bid:', 'yith-auctions-for-woocommerce' ); ?> </span>
-					<span> <?php echo wp_kses_post( isset( $max_bid ) ? wc_price( $max_bid ) : wc_price( $product->get_price() ) ); ?> </span>
+					<span> <?php echo wp_kses_post( isset( $bidder ) && !empty($bidder) ? wc_price( $bidder->bid ) : wc_price( $product->get_price() ) ); ?> </span>
 				</p>
 			</td>
 		</tr>

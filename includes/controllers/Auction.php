@@ -20,24 +20,34 @@ class Auction extends Email {
       add_filter('yith_wcact_after_auction_end', [$this, 'set_auction_status_to_finished']);
 
       add_action('template_redirect', [$this, 'set_auction']);
+      add_action('template_redirect', [$this, 'sg_manage_auction']);
     }
 
     public function set_auction() {
 
+      if ( isset($_GET['override-status']) ) {
+        wp_set_object_terms($_GET['prod_id'], 'finished', 'yith_wcact_auction_status', false );
+      }
+
         if (isset($_GET['dev'])) {
 
-          wp_set_object_terms($_GET['prod_id'], 'finished', 'yith_wcact_auction_status', false );
+          $product_id = 25122;
 
-          // $mailer = WC()->mailer();
-          // $order = wc_get_product(23440);
-          //
+
+          $bidder = get_user_auction('sg_hybrid_user_bid', 5, $product_id);
+
+
+          $mailer = WC()->mailer();
+          $order = wc_get_product($product_id);
+          $order->bidder = $bidder;
+
           // ob_start();
-          // $content =  hybrid_include('includes/admin/template/email/initial_bid_seller.php', $order);
+          $content =  hybrid_include('includes/admin/template/email/initial_bid_seller.php', $order);
           // $output = ob_get_contents();
           // ob_end_clean();
-          //
-          //  $mailer->send('jhed@hybridanchor.com', 'New bid to a product', $output, 'Content-Type: text/html');
-          //  exit;
+
+           $mailer->send('jhed@hybridanchor.com', 'New bid to a product', $output, 'Content-Type: text/html');
+
 
           // wp_set_object_terms(20579, 'finished', 'yith_wcact_auction_status', false );
           // wp_set_post_terms(18488, 'finished', 'yith_wcact_auction_status', false );
@@ -56,6 +66,37 @@ class Auction extends Email {
             // update_post_meta($product_id, '_yith_auction_for', strtotime($current_date) );
             // update_post_meta($product_id, '_yith_auction_to', strtotime('+15 minutes', strtotime($current_date)));
         }
+    }
+
+    public function sg_manage_auction() {
+      $action     = filter_input(INPUT_GET, 'sg_auction');
+      $product_id = filter_input(INPUT_GET, 'product_id');
+      $user_id    = filter_input(INPUT_GET, 'user_id');
+      $bid_price  = filter_input(INPUT_GET, 'bid_price');
+
+      switch ($action) {
+        case 'approve':
+          $this->enable_auction_to_product($product_id, $bid_price);
+          $userStatus = $this->update_user_status($product_id, $user_id, 1);
+          $auctionEnabledToUser = $this->enable_auction_to_user($user_id, $product_id, $bid_price);
+          if ($auctionEnabledToUser && $userStatus) {
+            wp_redirect(site_url("my-account?action=approved&status=1&product_id=$product_id"));
+            exit;
+          }
+        break;
+
+        case 'reject':
+          $userStatus = delete_data('sg_hybrid_user_bid', [
+            'product_id' => $product_id,
+            'user_id'    => $user_id
+          ]);
+          if ($userStatus) {
+            wp_redirect(site_url("my-account?action=rejected&status=1&product_id=$product_id"));
+            exit;
+          }
+        break;
+
+      }
     }
 
     public function approve_user_auction() {
@@ -126,10 +167,8 @@ class Auction extends Email {
     }
 
     public function sg_user_bid() {
-
       // error_reporting(E_ALL);
       // ini_set("display_errors", 1);
-
       global $product;
 
       $amount     = sanitize_text_field($_POST['amount']);
@@ -318,13 +357,21 @@ class Auction extends Email {
     }
 
     public function initial_bid_user_template($user_id, $product_id, $bid) {
-      $user = get_user_by('id', $user_id);
-      $user_email = $user->user_email;
-      $user_login = $user->user_login;
-      $product = wc_get_product($product_id);
 
       $mailer = WC()->mailer();
+
+      $user = get_user_by('id', $user_id);
+
+      $user_email = $user->user_email;
+      $user_login = $user->user_login;
+
+      $product = wc_get_product($product_id);
+
+      $bidder = get_user_auction('sg_hybrid_user_bid', $user_id, $product_id);
+
       $product->user_login = $user_login;
+      $product->bidder     = $bidder;
+
       ob_start();
       $content = hybrid_include('includes/admin/template/email/initial_bid_user.php', $product);
       $output  = ob_get_contents();
@@ -334,14 +381,19 @@ class Auction extends Email {
     }
 
     public function initial_bid_seller_template( $product_id, $bid) {
+
+      $mailer = WC()->mailer();
+
       $product = wc_get_product($product_id);
       $manager_id = isset(get_post_custom_values('shop_manager', $product_id)[0]) ? get_post_custom_values('shop_manager', $product_id)[0] : 3;
       $shop_manager = get_user_by('id', $manager_id);
       $shop_manager_email = $shop_manager->user_email;
       $shop_manager_login = $shop_manager->user_login;
 
-      $mailer = WC()->mailer();
+      $bidder = get_user_auction('sg_hybrid_user_bid', $user_id, $product_id);
+
       $product->seller_login = $shop_manager_login;
+      $product->bidder       = $bidder;
       ob_start();
       $content = hybrid_include('includes/admin/template/email/initial_bid_seller.php', $product);
       $output  = ob_get_contents();
@@ -351,13 +403,17 @@ class Auction extends Email {
 
     public function approved_bid_template($user_id, $product_id, $bid) {
 
+      $mailer = WC()->mailer();
+
       $user = get_user_by('id', $user_id);
       $user_email = $user->user_email;
       $user_login = $user->user_login;
 
+      $bidder = get_user_auction('sg_hybrid_user_bid', $user_id, $product_id);
+
       $product = wc_get_product($product_id);
       $product->user_login = $user_login;
-      $mailer = WC()->mailer();
+      $product->bidder     = $bidder;
 
       ob_start();
       $content = hybrid_include('includes/admin/template/email/new-bid.php', $product);
