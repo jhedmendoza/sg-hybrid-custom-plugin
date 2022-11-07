@@ -3,7 +3,7 @@ if (!defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Auction extends Email {
 
-    const AUCTION_TIME = '+1 minutes';
+    const AUCTION_TIME = '+15 minutes';
 
     public function __construct() {
       add_action('wp_ajax_sg_user_bid', [$this, 'sg_user_bid']);
@@ -333,7 +333,7 @@ class Auction extends Email {
 
     public function send_initial_bid_notif($user_id, $product_id, $bid) {
       $this->initial_bid_user_template($user_id, $product_id, $bid);
-      $this->initial_bid_seller_template($product_id, $bid);
+      $this->initial_bid_seller_template($user_id, $product_id, $bid);
     }
 
     public function send_approved_bid_notif($user_id, $product_id, $bid) {
@@ -378,7 +378,7 @@ class Auction extends Email {
       $mailer->send($user_email, 'Successful initial bid', $output, 'Content-Type: text/html');
     }
 
-    public function initial_bid_seller_template( $product_id, $bid) {
+    public function initial_bid_seller_template($user_id, $product_id, $bid) {
 
       $mailer = WC()->mailer();
 
@@ -388,7 +388,7 @@ class Auction extends Email {
       $shop_manager_email = $shop_manager->user_email;
       $shop_manager_login = $shop_manager->user_login;
 
-      $bidder = get_user_auction('sg_hybrid_user_bid', $manager_id, $product_id);
+      $bidder = get_user_auction('sg_hybrid_user_bid', $user_id, $product_id);
 
       $product->seller_login = $shop_manager_login;
       $product->bidder       = $bidder;
