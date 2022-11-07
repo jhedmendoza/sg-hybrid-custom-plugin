@@ -31,11 +31,9 @@ class Auction extends Email {
 
         if (isset($_GET['dev'])) {
 
-          $product_id = 25122;
+          $product_id = 23163;
 
-
-          $bidder = get_user_auction('sg_hybrid_user_bid', 5, $product_id);
-
+          $bidder = get_user_auction('sg_hybrid_user_bid', 11, $product_id);
 
           $mailer = WC()->mailer();
           $order = wc_get_product($product_id);
@@ -390,7 +388,7 @@ class Auction extends Email {
       $shop_manager_email = $shop_manager->user_email;
       $shop_manager_login = $shop_manager->user_login;
 
-      $bidder = get_user_auction('sg_hybrid_user_bid', $user_id, $product_id);
+      $bidder = get_user_auction('sg_hybrid_user_bid', $manager_id, $product_id);
 
       $product->seller_login = $shop_manager_login;
       $product->bidder       = $bidder;
