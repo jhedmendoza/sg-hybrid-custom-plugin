@@ -133,13 +133,15 @@ function get_product_status($product_id) {
 	$product_auctioned_table = $wpdb->prefix.'wp_yith_wcact_auction';
 	$user_has_paid = get_post_meta($product_id, '_yith_auction_paid_order', true);
 
-	if ( empty($user_has_paid) )
+
+	$terms = get_the_terms($product_id, 'yith_wcact_auction_status');
+	$auction_status = $terms[0]->slug;
+
+	if ($auction_status == 'started' || empty($auction_status) )
 		return 'Ongoing Auction';
-
-	if ( strtolower($user_has_paid) == 'yes' )
+	else 	if ( strtolower($user_has_paid) == 'yes' )
 		return 'Sold';
-
-	if ( strtolower($user_has_paid) == 'no' )
+	else	if ( strtolower($user_has_paid) == 'no' )
 		return 'Awaiting Payment';
 
 }

@@ -31,20 +31,27 @@ class Auction extends Email {
 
         if (isset($_GET['dev'])) {
 
-          $product_id = 23163;
+          $product_id = 20455;
 
-          $bidder = get_user_auction('sg_hybrid_user_bid', 11, $product_id);
+          $user = get_user_by('id', $user_id);
+
+          $user_email = $user->user_email;
+          $user_login = $user->user_login;
+
+          $bidder = get_user_auction('sg_hybrid_user_bid', 5, $product_id);
 
           $mailer = WC()->mailer();
           $order = wc_get_product($product_id);
           $order->bidder = $bidder;
 
           // ob_start();
-          $content =  hybrid_include('includes/admin/template/email/initial_bid_seller.php', $order);
+          $content =  hybrid_include('includes/admin/template/email/auction-winner.php', $order);
+
+          echo $content; exit;
           // $output = ob_get_contents();
           // ob_end_clean();
 
-           $mailer->send('jhed@hybridanchor.com', 'New bid to a product', $output, 'Content-Type: text/html');
+           $mailer->send('jhed@hybridanchor.com', 'You won the auction', $output, 'Content-Type: text/html');
 
 
           // wp_set_object_terms(20579, 'finished', 'yith_wcact_auction_status', false );
