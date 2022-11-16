@@ -1,4 +1,8 @@
 <?php
+if ( is_account_page() )
+  hybrid_include('includes/admin/template/auction/header.php');
+?>
+<?php
 $wc_product = wc_get_product($attributes['product_id']);
 
 $product = apply_filters('yith_wcact_get_auction_product', $wc_product );
@@ -17,9 +21,13 @@ if (isset($_GET['debug-test'])) {
 <div class="wrapper fc-wrapper">
   <div class="container mt-3">
 
-    <div class="row">
-      <a href="<?php echo admin_url('admin.php?page=sg-auction-products') ?>" class="ps-0 pb-3">Back to auction list</a>
-    </div>
+     <div class="row <?php echo is_account_page() ? 'text-right' : ''  ?>">
+       <?php if ( !is_account_page() ): ?>
+          <a href="<?php echo admin_url('admin.php?page=sg-auction-products') ?>" class="ps-0 pb-3">Back to auction list</a>
+        <?php else: ?>
+          <a href="<?php echo site_url('my-account/auction-manager') ?>" class="ps-0 pb-3">Back to auction list</a>
+        <?php endif; ?>
+      </div>
 
     <div class="row">
        <h5 class="mb-4 bg-secondary p-1"><a class="text-white text-decoration-none" href="<?php echo get_permalink($attributes['product_id']) ?>" target="_blank"><?php echo $wc_product->get_title() ?></a></h5>
@@ -178,3 +186,7 @@ if (isset($_GET['debug-test'])) {
   </div>
 </div>
 <?php hybrid_include('includes/admin/template/partials/notification.php'); ?>
+<?php
+  if ( is_account_page() )
+    hybrid_include('includes/admin/template/auction/footer.php');
+ ?>

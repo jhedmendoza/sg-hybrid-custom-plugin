@@ -17,6 +17,12 @@ function hybrid_enqueue_script() {
 	wp_enqueue_script('sg-hybrid-login-script', HYBRID_DIR_URL . 'assets/js/login.js', ['jquery'], $version_script, true);
 	wp_enqueue_script('sg-hybrid-layout-script', HYBRID_DIR_URL . 'assets/js/layout.js', ['jquery'], $version_script, true);
 
+	//admin scripts
+	wp_enqueue_script('moment-min', HYBRID_DIR_URL.'includes/admin/assets/lib/moment.min.js', [], null, true);
+	wp_enqueue_script('countdown-min', HYBRID_DIR_URL.'includes/admin/assets/lib/countdown.min.js', [], '2.6.1', true);
+	wp_enqueue_script('moment-countdown', HYBRID_DIR_URL.'includes/admin/assets/lib/moment-countdown.min.js', [], null, true);
+	wp_enqueue_script('sg-admin-custom', HYBRID_DIR_URL . 'includes/admin/assets/js/sg-admin-custom.js', ['jquery'], $admin_version_script, true );
+
 }
 
 function js_inline_script() {
