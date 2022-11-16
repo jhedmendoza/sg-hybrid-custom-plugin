@@ -12,4 +12,7 @@
     background-color: #0b5ed7;
     border-color: #0a58ca;
     background: linear-gradient(45deg, #0b5ed7, #0b5ed7) !important;
+}
+.entry-content a {text-decoration: none;color: #cdaa59 !important}
+a.btn, .bg-secondary a {color:#ffffff !important}
 </style>

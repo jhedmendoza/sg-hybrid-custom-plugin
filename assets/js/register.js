@@ -47,7 +47,7 @@
 
           return new Promise(function (resolve) {
             $.ajax({
-                url : sg_ajax_url,
+                url : ajaxurl,
                 type: 'POST',
                 data: {
                   'action'    : 'sg_user_bid',
@@ -111,7 +111,7 @@
 
           return new Promise(function (resolve) {
             $.ajax({
-                url : sg_ajax_url,
+                url : ajaxurl,
                 type: 'POST',
                 data: {
                   'action'  : 'sg_user_registration',
