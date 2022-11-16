@@ -11,6 +11,8 @@ $terms = get_the_terms($attributes['product_id'], 'yith_wcact_auction_status');
 $auction_status = $terms[0]->slug;
 
 if (isset($_GET['debug-test'])) {
+
+  wp_remove_object_terms($_GET['prod'], 'finished', 'yith_wcact_auction_status' );
   echo $has_product_bid;
   printr($terms);
 }

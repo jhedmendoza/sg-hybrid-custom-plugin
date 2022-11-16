@@ -245,6 +245,9 @@ class Auction extends Email {
       delete_post_meta($product_id, 'current_bid');
 
       update_post_meta($product_id, '_price', $regular_price[0]);
+
+      wp_remove_object_terms( $product_id, 'finished', 'yith_wcact_auction_status' );
+
       wp_set_object_terms( $product_id, 'simple', 'product_type', false );
     }
 
