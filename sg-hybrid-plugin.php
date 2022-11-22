@@ -6,7 +6,7 @@ Version: 1.0
 Author: Hybrid Anchor
 Author URI: https://www.hybridanchor.com/
 */
-
+ 
 if ( !defined('ABSPATH') ) exit; // Exit if accessed directly
 
 if ( !class_exists('Hybrid') ) :
