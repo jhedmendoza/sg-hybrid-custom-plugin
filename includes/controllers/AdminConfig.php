@@ -30,7 +30,7 @@ class AdminConfig {
 
 
         remove_menu_page('yith_plugin_panel');
-        remove_menu_page('cptui_main_menu');
+        remove_menu_page('cptui_main_menu'); 
 
         remove_submenu_page( 'index.php', 'update-core.php');
       }
