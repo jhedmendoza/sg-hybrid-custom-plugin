@@ -301,6 +301,8 @@ class Auction extends Email {
         $product_id = $product->get_id();
         $btnMessage = '';
 
+        $shop_manager = get_post_meta($product_id, 'shop_manager', true);
+
         //check if user has payment method
         $saved_methods = wc_get_customer_saved_methods_list($user_id);
         $has_methods   = (bool) $saved_methods;
@@ -322,7 +324,7 @@ class Auction extends Email {
           $disableBtn = '';
         }
 
-        if ($product->get_type() != 'auction') {
+        if ($product->get_type() != 'auction' && !empty($shop_manager)) {
             echo '<button '.$disableBtn.' type="button" data-product-id="'.$product_id.'"  style="display:none;" class="bid-btn single_add_to_cart_button button alt '.$disableBtn.'">Bid</button>';
             echo "<p class='err-msg'>$btnMessage</p>";
         }
