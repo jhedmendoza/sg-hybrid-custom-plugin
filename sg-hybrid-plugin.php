@@ -60,7 +60,7 @@ class Hybrid {
 		//Include controllers.
 		require_once(HYBRID_PATH.'includes/controllers/Email.php');
 		require_once(HYBRID_PATH.'includes/controllers/User.php');
-    require_once(HYBRID_PATH.'includes/controllers/Auction.php');
+    	require_once(HYBRID_PATH.'includes/controllers/Auction.php');
 		require_once(HYBRID_PATH.'includes/controllers/CronJob.php');
 		require_once(HYBRID_PATH.'includes/controllers/AdminConfig.php');
 
@@ -89,7 +89,25 @@ class Hybrid {
 	}
 
 
-	function hybrid_install() {}
+	function hybrid_install() {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'sg_hybrid_user_bid';
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$sql = "CREATE TABLE $table_name (
+						id INT (11) AUTO_INCREMENT,
+						product_id INT(11),
+						user_id INT(150),
+						bid FLOAT,
+						status TINYINT (1),
+						date DATETIME DEFAULT CURRENT_TIMESTAMP,
+						PRIMARY KEY (id)
+					) $charset_collate";
+
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		dbDelta( $sql );
+		add_option( 'sg_db_version', HYBRID_VERSION );
+	}
 
 }
 
