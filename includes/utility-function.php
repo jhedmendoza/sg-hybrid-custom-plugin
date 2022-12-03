@@ -42,27 +42,46 @@ function sg_product_auction_list() {
   $requests = new AuctionRequests();
   $data = $requests->get_all_auctioned_products();
 
+  $current_user_id = get_current_user_id();
+  $assigned_products = get_assigned_products($current_user_id); 
+
+  if (isset($assigned_products) && !empty($assigned_products) ) {
+
+    if ( isset($data['data']) && !empty($data['data']) ) {
+      $data['data'] = array_merge($data['data'], $assigned_products['data']);
+    }
+    else {
+      $data = $assigned_products;
+    }
+    
+  }
+
+
   if ( isset($data['data']) && !empty($data['data']) ) {
 
     foreach($data['data'] as $value) {
 
-      $product_id = $value->product_id;
-      $user_id    = $value->user_id;
+      if ( count( (array)$value ) )
+      {
+        $product_id = $value->product_id;
+        $user_id    = $value->user_id;
 
-      $product = wc_get_product($product_id);
-      $user = get_user_by('id', $user_id);
+        $product = wc_get_product($product_id);
+        $user = get_user_by('id', $user_id);
 
-      $products[] = array(
-        'product_id'     => $product_id,
-        'product_name'   => $product->get_title(),
-        'user_id'        => $user_id,
-        'user_name'      => $user->data->display_name,
-        'amount'         => number_format((float)$value->bid, 2, '.', ''),
-        'status'         => $value->status,
-        'total_bidders'  => $value->total_bidders,
-        'date'           => $value->date,
-        'product_status' => get_product_status($value->product_id)
-      );
+        $products[] = array(
+          'product_id'     => $product_id,
+          'product_name'   => $product->get_title(),
+          'user_id'        => $user_id,
+          'user_name'      => $user->data->display_name,
+          'amount'         => number_format((float)$value->bid, 2, '.', ''),
+          'status'         => $value->status,
+          'total_bidders'  => isset($value->total_bidders) ? $value->total_bidders : 0,
+          'date'           => $value->date,
+          'product_status' => isset($value->total_bidders) ? get_product_status($value->product_id) : 'No bidders yet'
+        );
+      }
+
     }
   }
 
@@ -75,6 +94,7 @@ function sg_product_auction_list() {
 
   hybrid_include('includes/admin/template/auction/product-list.php', $result);
 }
+
 
 function sg_bidder_list() {
   $product_id = filter_input(INPUT_GET, 'product_id');
@@ -143,6 +163,9 @@ function sg_bidder_list() {
 
 
 function render_pagination($data) {
+
+  if (empty($data['data']) ) return;
+
   $pagination = paginate_links([
     'base'      => add_query_arg('cpage', '%#%'),
     'format'    => '',

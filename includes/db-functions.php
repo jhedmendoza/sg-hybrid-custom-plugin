@@ -139,9 +139,9 @@ function get_product_status($product_id) {
 
 	if ($auction_status == 'started' || empty($auction_status) )
 		return 'Ongoing Auction';
-	else 	if ( strtolower($user_has_paid) == 'yes' )
+	else if ( strtolower($user_has_paid) == 'yes' )
 		return 'Sold';
-	else	if ( strtolower($user_has_paid) == 'no' )
+	else if ( strtolower($user_has_paid) == 'no' )
 		return 'Awaiting Payment';
 
 }
@@ -169,4 +169,31 @@ function get_all_bidders() {
 	$query = "SELECT * FROM $table GROUP BY auction_id";
 	$result = $wpdb->get_results($query);
 	return $result;
+}
+
+function get_assigned_products($user_id) {
+	global $wpdb;
+	
+	$table = $wpdb->prefix.'postmeta';
+	$query = "SELECT meta_id AS id, post_id AS product_id
+ 			  FROM $table
+ 			  WHERE meta_key = 'shop_manager'
+ 			  AND meta_value = $user_id
+ 			";
+
+	$results = $wpdb->get_results($query);
+
+	foreach ($results as $key => $result) 
+	{
+		$bidder_count = count_product_bidders($result->product_id);
+
+		if ($bidder_count > 0)
+		{
+			unset($result->product_id);
+			unset($result->id);
+		}
+	}
+
+	$data['data'] = $results;
+	return $data;
 }
