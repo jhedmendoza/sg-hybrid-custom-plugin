@@ -291,8 +291,9 @@ class Auction extends Email {
 
     public function set_auction_status_to_finished($product) {
       $product_id = $product->get_id();
-      mail('jhed@hybridanchor.com', 'auction finished - '.$product_id, $product_id);
       wp_set_object_terms($product_id, 'finished', 'yith_wcact_auction_status', false );
+      mail('jhed@hybridanchor.com', 'auction finished - '.$product_id, $product_id);
+
     }
 
     public function bid_button_on_product_page() {
@@ -327,6 +328,9 @@ class Auction extends Email {
         if ($product->get_type() != 'auction' && !empty($shop_manager)) {
             echo '<button '.$disableBtn.' type="button" data-product-id="'.$product_id.'"  style="display:none;" class="bid-btn single_add_to_cart_button button alt '.$disableBtn.'">Bid</button>';
             echo "<p class='err-msg'>$btnMessage</p>";
+
+            // echo do_shortcode('[yith_wcact_add_to_watchlist]');
+
         }
     }
 
