@@ -85,7 +85,29 @@ function sg_product_auction_list() {
     }
   }
 
+  $page = ! empty( $_GET['cpage'] ) ? (int) $_GET['cpage'] : 1;
+
+  $total = count( $products ); //total items in array    
+
+  $items_per_page = 5; //per page    
+
+  $totalPages = ceil( $total/ $items_per_page ); //calculate total pages
+
+  $page = max($page, 1); 
+  $page = min($page, $totalPages); 
+
+  $offset = ($page - 1) * $items_per_page;
+
+  if( $offset < 0 ) $offset = 0;
+
+  $data['pagination']['total'] = $total;
+  $data['pagination']['page']  = $page;
+  $data['pagination']['items_per_page'] = $items_per_page;
+
+
   $pagination = render_pagination($data);
+
+  $products = array_slice( $products, $offset, $items_per_page );
 
   $result = [
     'products' => $products,
@@ -164,7 +186,7 @@ function sg_bidder_list() {
 
 function render_pagination($data) {
 
-  if (empty($data['data']) ) return;
+  // printr($data);
 
   $pagination = paginate_links([
     'base'      => add_query_arg('cpage', '%#%'),

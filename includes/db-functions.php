@@ -44,12 +44,12 @@ function get_all_data($table_name, $group_by='') {
 	$user_meta = get_userdata($current_user_id);
 	$user_roles = $user_meta->roles;
 
-	$items_per_page = 10;
+	// $items_per_page = 10;
 
-	$total = $wpdb->get_var("SELECT COUNT(1) FROM $table");
+	// $total = $wpdb->get_var("SELECT COUNT(1) FROM $table");
 
-	$page = isset($_GET['cpage'] ) ? abs( (int) $_GET['cpage'] ) : 1;
-	$offset = ( $page * $items_per_page ) - $items_per_page;
+	// $page = isset($_GET['cpage'] ) ? abs( (int) $_GET['cpage'] ) : 1;
+	// $offset = ( $page * $items_per_page ) - $items_per_page;
 
 	$query = "SELECT * FROM $table";
 
@@ -58,24 +58,26 @@ function get_all_data($table_name, $group_by='') {
 	if ($group_by)
 		$group_query = 'GROUP BY '.$group_by;
 
-	$results = $wpdb->get_results($query . " $group_query ORDER BY date DESC LIMIT ${offset}, ${items_per_page}");
+	// $results = $wpdb->get_results($query . " $group_query ORDER BY date DESC LIMIT ${offset}, ${items_per_page}");
+
+	$results = $wpdb->get_results($query . " $group_query ORDER BY date DESC");
 
 
 	foreach ($results as $key => $result) {
 
-			$shop_manager = get_post_meta($result->product_id, 'shop_manager', true);
+		$shop_manager = get_post_meta($result->product_id, 'shop_manager', true);
 
-			//show only the list of product that belongs to shop manager or if user type is an administrator
-			if ($shop_manager == $current_user_id || in_array('administrator', $user_roles)) {
-				$data['data'][$key] = $result;
-				$data['data'][$key]->total_bidders = count_product_bidders($result->product_id);
-			}
+		//show only the list of product that belongs to shop manager or if user type is an administrator
+		if ($shop_manager == $current_user_id || in_array('administrator', $user_roles)) {
+			$data['data'][$key] = $result;
+			$data['data'][$key]->total_bidders = count_product_bidders($result->product_id);
+		}
 
 	}
 
-	$data['pagination']['total'] = $total;
-	$data['pagination']['page']  = $page;
-	$data['pagination']['items_per_page'] = $items_per_page;
+	// $data['pagination']['total'] = $total;
+	// $data['pagination']['page']  = $page;
+	// $data['pagination']['items_per_page'] = $items_per_page;
 
 	return $data;
 }
