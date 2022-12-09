@@ -4,6 +4,7 @@ if ( !defined('ABSPATH') ) exit; // Exit if accessed directly
 add_action('wp_head', 'js_inline_script' );
 add_action('wp_enqueue_scripts', 'hybrid_enqueue_script');
 
+
 function hybrid_enqueue_script() {
 
 	$version_script = '1.2';
@@ -23,7 +24,16 @@ function hybrid_enqueue_script() {
 	wp_enqueue_script('moment-countdown', HYBRID_DIR_URL.'includes/admin/assets/lib/moment-countdown.min.js', [], null, true);
 	wp_enqueue_script('sg-admin-custom', HYBRID_DIR_URL . 'includes/admin/assets/js/sg-admin-custom.js', ['jquery'], $admin_version_script, true );
 
+
+	//enable watchlist to pre-bid products
+	wp_enqueue_style( 'yith-wcact-frontend-css', WP_CONTENT_DIR  . 'plugins/yith-woocommerce-auctions-premium/css/frontend.css', array(), '3.10.0' );
+	// wp_enqueue_script( 'yith-wcact-frontend-js-premium', WP_CONTENT_DIR  . 'plugins/yith-woocommerce-auctions-premium/js/frontend-premium.js', array( 'jquery', 'jquery-ui-datepicker', 'accounting' ), '3.10.0', 'true' );
+	// wp_enqueue_script( 'yith_wcact_frontend_shop_premium', WP_CONTENT_DIR  . 'plugins/yith-woocommerce-auctions-premium/js/fontend_shop-premium.js', array( 'jquery', 'jquery-ui-sortable' ), '3.10.0', true );
+
+
 }
+
+
 
 function js_inline_script() {
 ?>

@@ -329,7 +329,9 @@ class Auction extends Email {
             echo '<button '.$disableBtn.' type="button" data-product-id="'.$product_id.'"  style="display:none;" class="bid-btn single_add_to_cart_button button alt '.$disableBtn.'">Bid</button>';
             echo "<p class='err-msg'>$btnMessage</p>";
 
-            // echo do_shortcode('[yith_wcact_add_to_watchlist]');
+            echo '<div class="ywcact-add-to-watchlist-container">';
+            echo do_shortcode('[yith_wcact_add_to_watchlist]');
+            echo '</div>';
 
         }
     }
