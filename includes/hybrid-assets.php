@@ -17,6 +17,7 @@ function hybrid_enqueue_script() {
 	wp_enqueue_script('sg-hybrid-register-script', HYBRID_DIR_URL . 'assets/js/register.js', ['jquery'], $version_script, true);
 	wp_enqueue_script('sg-hybrid-login-script', HYBRID_DIR_URL . 'assets/js/login.js', ['jquery'], $version_script, true);
 	wp_enqueue_script('sg-hybrid-layout-script', HYBRID_DIR_URL . 'assets/js/layout.js', ['jquery'], $version_script, true);
+	wp_enqueue_script('sg-auction-script', HYBRID_DIR_URL . 'assets/js/auction.js', ['jquery'], $version_script, true);
 
 	//admin scripts
 	wp_enqueue_script('moment-min', HYBRID_DIR_URL.'includes/admin/assets/lib/moment.min.js', [], null, true);
@@ -27,10 +28,6 @@ function hybrid_enqueue_script() {
 
 	//enable watchlist to pre-bid products
 	wp_enqueue_style( 'yith-wcact-frontend-css', WP_CONTENT_DIR  . 'plugins/yith-woocommerce-auctions-premium/css/frontend.css', array(), '3.10.0' );
-	// wp_enqueue_script( 'yith-wcact-frontend-js-premium', WP_CONTENT_DIR  . 'plugins/yith-woocommerce-auctions-premium/js/frontend-premium.js', array( 'jquery', 'jquery-ui-datepicker', 'accounting' ), '3.10.0', 'true' );
-	// wp_enqueue_script( 'yith_wcact_frontend_shop_premium', WP_CONTENT_DIR  . 'plugins/yith-woocommerce-auctions-premium/js/fontend_shop-premium.js', array( 'jquery', 'jquery-ui-sortable' ), '3.10.0', true );
-
-
 }
 
 

@@ -21,6 +21,9 @@ class Auction extends Email {
 
       add_action('template_redirect', [$this, 'set_auction']);
       add_action('template_redirect', [$this, 'sg_manage_auction']);
+
+      add_action( 'wp_ajax_override_yith_watchlist', array( $this, 'override_yith_watchlist' ) );
+      add_action('wp_ajax_nopriv_override_yith_watchlist', [$this, 'override_yith_watchlist']);
     }
 
     public function set_auction() {
@@ -329,9 +332,11 @@ class Auction extends Email {
             echo '<button '.$disableBtn.' type="button" data-product-id="'.$product_id.'"  style="display:none;" class="bid-btn single_add_to_cart_button button alt '.$disableBtn.'">Bid</button>';
             echo "<p class='err-msg'>$btnMessage</p>";
 
-            echo '<div class="ywcact-add-to-watchlist-container">';
-            echo do_shortcode('[yith_wcact_add_to_watchlist]');
-            echo '</div>';
+            if ( is_user_logged_in() ) {
+              echo '<div class="ywcact-add-to-watchlist-container">';
+              echo do_shortcode('[yith_wcact_add_to_watchlist]');
+              echo '</div>';
+            }
 
         }
     }
@@ -345,6 +350,37 @@ class Auction extends Email {
         echo '<style>.ywcact-add-to-watchlist-container, .yith-wcact-watchlist-button {display:none}</style>';
       }
     }
+
+    public function override_yith_watchlist() {
+
+      $product_id = isset( $_POST['product_id'] ) ? sanitize_text_field( wp_unslash( $_POST['product_id'] ) ) : false;
+      $user_id    = isset( $_POST['user_id'] ) ? sanitize_text_field( wp_unslash( $_POST['user_id'] ) ) : false;
+
+      $product = wc_get_product( $product_id );
+
+      $instance             = YITH_Auctions()->bids;
+      $product_in_watchlist = $instance->is_product_in_watchlist( $product_id, $user_id );
+
+      if ( ! $product_in_watchlist ) {
+        $added = $instance->add_product_to_watchlist( $product_id, $user_id );
+
+        if ( $added ) {
+          $templates = array();
+
+        $templates['template_watchlist_button'] = do_shortcode( '[yith_wcact_add_to_watchlist product_id=' . $product_id . ']' );
+        $templates['status'] = true;
+        $templates['msg'] = "You successfully watchlisted this product";
+
+          if ( $templates ) {
+            wp_send_json( $templates );
+          }
+        }
+      }
+      
+
+      die();
+    }
+
 
 /********************** Email methods **********************************************************/
 //TODO: separate this methods to a new class
