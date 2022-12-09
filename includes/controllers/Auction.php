@@ -331,13 +331,12 @@ class Auction extends Email {
         if ($product->get_type() != 'auction' && !empty($shop_manager)) {
             echo '<button '.$disableBtn.' type="button" data-product-id="'.$product_id.'"  style="display:none;" class="bid-btn single_add_to_cart_button button alt '.$disableBtn.'">Bid</button>';
             echo "<p class='err-msg'>$btnMessage</p>";
+        }
 
-            if ( is_user_logged_in() ) {
-              echo '<div class="ywcact-add-to-watchlist-container">';
-              echo do_shortcode('[yith_wcact_add_to_watchlist]');
-              echo '</div>';
-            }
-
+        if ( is_user_logged_in() ) {
+          echo '<div class="ywcact-add-to-watchlist-container">';
+          echo do_shortcode('[yith_wcact_add_to_watchlist]');
+          echo '</div>';
         }
     }
 
