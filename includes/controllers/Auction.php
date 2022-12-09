@@ -368,7 +368,7 @@ class Auction extends Email {
 
         $templates['template_watchlist_button'] = do_shortcode( '[yith_wcact_add_to_watchlist product_id=' . $product_id . ']' );
         $templates['status'] = true;
-        $templates['msg'] = "You successfully watchlisted this product";
+        $templates['msg'] = "You successfully watchlisted this bottle";
 
           if ( $templates ) {
             wp_send_json( $templates );
