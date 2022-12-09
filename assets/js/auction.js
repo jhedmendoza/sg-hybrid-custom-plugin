@@ -16,7 +16,9 @@
             'product_id': product_id,
             'user_id'   : user_id
           },
-          beforeSend: function () {},
+          beforeSend: function () {
+            $('.add_to_watchlist').css('pointer-events', 'none');
+          },
           success: function (resp) {
 
             if (resp.status) {
