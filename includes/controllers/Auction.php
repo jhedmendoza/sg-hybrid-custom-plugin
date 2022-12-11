@@ -24,6 +24,8 @@ class Auction extends Email {
 
       add_action( 'wp_ajax_override_yith_watchlist', array( $this, 'override_yith_watchlist' ) );
       add_action('wp_ajax_nopriv_override_yith_watchlist', [$this, 'override_yith_watchlist']);
+
+      // apply_filters( 'yith_wcact_get_watchlist_auctions_by_user_results', [$this, 'override_yith_watchlist_result'], 1);
     }
 
     public function set_auction() {
@@ -380,6 +382,38 @@ class Auction extends Email {
       die();
     }
 
+    public function override_yith_watchlist_result( $user_id, $limit = false ) {
+      global $wpdb;
+
+      $group_by = ' GROUP by auction_id ';
+      $orderby  = ' ORDER BY dateadded DESC ';
+      $limit    = ( $limit ) ? $wpdb->prepare( ' LIMIT %d', $limit ) : '';
+      $where    = $wpdb->prepare( " WHERE watchlist.user_id = %d AND pm2.meta_value = 'instock' AND posts.post_status = 'publish' AND term_taxonomy.taxonomy = 'product_type' AND terms.slug = 'auction' ", $user_id );
+      $join     = " LEFT JOIN {$wpdb->postmeta} AS pm1 ON ( watchlist.auction_id = pm1.post_id ) LEFT JOIN {$wpdb->postmeta} AS pm2 ON (pm1.post_id = pm2.post_id AND pm2.meta_key = '_stock_status') LEFT JOIN {$wpdb->posts} AS posts ON ( watchlist.auction_id = posts.ID ) ";
+
+      $inner_join_tax = " INNER JOIN {$wpdb->term_relationships} AS term_relationships ON ( watchlist.auction_id = term_relationships.object_id ) INNER JOIN {$wpdb->term_taxonomy} AS term_taxonomy ON ( term_relationships.term_taxonomy_id = term_taxonomy.term_taxonomy_id )
+                INNER JOIN {$wpdb->terms} AS terms ON ( term_taxonomy.term_id = terms.term_id ) ";
+
+      $select = "SELECT auction_id FROM $this->table_watchlist AS watchlist ";
+
+      $query = $select . $join . $inner_join_tax . $where . $group_by . $orderby . $limit;
+
+      $results = $wpdb->get_results( $query, OBJECT_K ); // phpcs:ignore
+
+      /**
+       * APPLY_FILTERS: yith_wcact_get_watchlist_auctions_by_user_results
+       *
+       * Filter the query results for the products in the watchlist for a specific user.
+       *
+       * @param array  $results Query results
+       * @param int    $user_id User ID
+       * @param string $limit   Query limit
+       *
+       * @return array
+       */
+      return $results;
+    }
+
 
 /********************** Email methods **********************************************************/
 //TODO: separate this methods to a new class
@@ -396,13 +430,15 @@ class Auction extends Email {
       //send email to watchlist
       if ( isset($watchlist) && !empty($watchlist) ) {
         foreach ($watchlist as $wl) {
-          $this->approved_bid_template($watchlist->user_id, $product_id, $bid);
+          $this->approved_bid_template($wl->user_id, $product_id, $bid);
         }
       }
 
       //send email to lost bidders
-      foreach($rejected_users as $rejected) {
-        $this->approved_bid_template($rejected->user_id, $product_id, $bid);
+      if ( isset($rejected_users) && !empty($rejected_users)) {
+        foreach($rejected_users as $rejected) {
+          $this->approved_bid_template($rejected->user_id, $product_id, $bid);
+        } 
       }
 
     }
