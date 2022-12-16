@@ -331,15 +331,16 @@ class Auction extends Email {
         }
 
         if ($product->get_type() != 'auction' && !empty($shop_manager)) {
+            echo '<style>.quantity {display:none}</style>';
             echo '<button '.$disableBtn.' type="button" data-product-id="'.$product_id.'"  style="display:none;" class="bid-btn single_add_to_cart_button button alt '.$disableBtn.'">Bid</button>';
             echo "<p class='err-msg'>$btnMessage</p>";
         }
 
-        if ( is_user_logged_in() ) {
-          echo '<div class="ywcact-add-to-watchlist-container">';
-          echo do_shortcode('[yith_wcact_add_to_watchlist]');
-          echo '</div>';
-        }
+        // if ( is_user_logged_in() ) {
+        //   echo '<div class="ywcact-add-to-watchlist-container">';
+        //   echo do_shortcode('[yith_wcact_add_to_watchlist]');
+        //   echo '</div>';
+        // }
     }
 
     public function override_yith_content() {
@@ -356,6 +357,7 @@ class Auction extends Email {
 
       $product_id = isset( $_POST['product_id'] ) ? sanitize_text_field( wp_unslash( $_POST['product_id'] ) ) : false;
       $user_id    = isset( $_POST['user_id'] ) ? sanitize_text_field( wp_unslash( $_POST['user_id'] ) ) : false;
+      $is_active  = isset( $_POST['is_active'] ) ? sanitize_text_field( wp_unslash( $_POST['is_active'] ) ) : false;
 
       $product = wc_get_product( $product_id );
 
@@ -368,17 +370,32 @@ class Auction extends Email {
         if ( $added ) {
           $templates = array();
 
-        $templates['template_watchlist_button'] = do_shortcode( '[yith_wcact_add_to_watchlist product_id=' . $product_id . ']' );
-        $templates['status'] = true;
-        $templates['msg'] = "You successfully watchlisted this bottle";
+          $templates['template_watchlist_button'] = do_shortcode( '[yith_wcact_add_to_watchlist product_id=' . $product_id . ']' );
+          $templates['status'] = true;
+          $templates['msg'] = "You successfully watchlisted this bottle";
 
           if ( $templates ) {
             wp_send_json( $templates );
           }
         }
       }
-      
+      else {
+          $removed = $instance->remove_product_to_watchlist( $product_id, $user_id );
 
+          if ( $removed ) {
+            $templates = array();
+
+            $templates['template_watchlist_button'] = do_shortcode( '[yith_wcact_add_to_watchlist product_id=' . $product_id . ']' );
+
+            $templates['status'] = true;
+            $templates['msg'] = "You successfully removed this bottle in your watchlist";
+
+            if ( $templates ) {
+              wp_send_json( $templates );
+            }
+          }
+      }
+      
       die();
     }
 
