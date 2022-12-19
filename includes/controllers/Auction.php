@@ -22,8 +22,12 @@ class Auction extends Email {
       add_action('template_redirect', [$this, 'set_auction']);
       add_action('template_redirect', [$this, 'sg_manage_auction']);
 
-      add_action( 'wp_ajax_override_yith_watchlist', array( $this, 'override_yith_watchlist' ) );
+      add_action('wp_ajax_override_yith_watchlist', array( $this, 'override_yith_watchlist' ) );
       add_action('wp_ajax_nopriv_override_yith_watchlist', [$this, 'override_yith_watchlist']);
+
+      add_action( 'wp_ajax_remove_watchlist', array( $this, 'remove_watchlist' ) );
+      add_action('wp_ajax_nopriv_remove_watchlist', [$this, 'remove_watchlist']);
+
 
       // apply_filters( 'yith_wcact_get_watchlist_auctions_by_user_results', [$this, 'override_yith_watchlist_result'], 1);
     }
@@ -397,6 +401,29 @@ class Auction extends Email {
       }
       
       die();
+    }
+
+    public function remove_watchlist() {
+      $product_id = isset( $_POST['product_id'] ) ? sanitize_text_field( wp_unslash( $_POST['product_id'] ) ) : false;
+      $user_id    = isset( $_POST['user_id'] ) ? sanitize_text_field( wp_unslash( $_POST['user_id'] ) ) : false;
+
+      $removed = $instance->remove_product_to_watchlist( $product_id, $user_id );
+
+      if ( $removed ) {
+        $templates = array();
+
+        $templates['status'] = true;
+        $templates['msg'] = "You successfully removed this bottle in your watchlist";
+
+        if ( $templates ) {
+          wp_send_json( $templates );
+        }
+      }
+      else {
+        $templates['status'] = false;
+        $templates['msg'] = "There is something wrong. Please try again later.";
+      }
+
     }
 
     public function override_yith_watchlist_result( $user_id, $limit = false ) {
