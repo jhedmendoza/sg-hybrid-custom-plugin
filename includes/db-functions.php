@@ -127,6 +127,14 @@ function get_watchlist_by_user($user_id, $product_id) {
 	return $result;
 }
 
+function get_watchlist_by_user_id($user_id) {
+	global $wpdb;
+	$table = $wpdb->prefix.'yith_wcact_watchlist';
+	$query = "SELECT * FROM $table WHERE user_id = $user_id";
+	$result = $wpdb->get_results($query);
+	return $result;
+}
+
 function get_product_status($product_id) {
 
 	global $wpdb;
