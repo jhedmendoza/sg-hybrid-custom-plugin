@@ -1,7 +1,7 @@
 <?php 
 if ( !defined('ABSPATH') ) exit; // Exit if accessed directly 
 
-function insert_data($table_name, $data) { 
+function insert_data($table_name, $data) {  
 		global $wpdb;
 
 		$id = $wpdb->insert($wpdb->prefix.$table_name, $data);
