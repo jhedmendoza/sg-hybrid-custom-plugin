@@ -1,1 +1,1 @@
-#Custom Plugin for Football Careers that extends WP Job Manager, process payment gateway and many more.
+#Custom plugin for Scotch Galore that extends yith auction plugin.
